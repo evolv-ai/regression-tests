@@ -3,9 +3,12 @@ exports.config = {
   output: './output',
   helpers: {
     Puppeteer: {
-      url: 'http://localhost',
+      url: 'https://8s5ru.csb.app',
       show: true,
       windowSize: '1200x900'
+    },
+    "ChaiWrapper" : {
+      "require": "codeceptjs-chai"
     }
   },
   include: {
