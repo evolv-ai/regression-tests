@@ -1,10 +1,11 @@
+require('dotenv').config();
 exports.config = {
   tests: './tests/*_test.js',
   output: './output',
   helpers: {
     Puppeteer: {
-      url: 'https://8s5ru.csb.app',
-      show: true,
+      url: process.env.HOST_URL,
+      show: process.env.SHOW_BROWSER,
       windowSize: '1200x900'
     },
     "ChaiWrapper" : {
