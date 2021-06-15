@@ -1,4 +1,5 @@
 const needle = require('needle');
+
 Feature('css_check');
 
 const getLocator = async (string) => {
@@ -20,8 +21,19 @@ const getAttribute = async (string) => {
             
     })
     const attr = response.split(' ')[1].split('{')[1].split(":")[0]; 
-    return attr;
+    const value = response.split(' ')[1].split('{')[1].split(":")[1].slice(0, -1); 
+    const res = { attr:attr, value:value };
+    return res;
 }
+
+const basicRBG = {
+    red : 'rgb(255, 0, 0)',
+    yellow : 'rgb(255, 255, 0)',
+    grey : 'rgb(128, 128, 128)',
+    blue : 'rgb(0, 0, 255)',
+    green : 'rgb(0, 128, 0)'
+}
+
 
 Scenario('check for css values', async ({ I }) => {
     I.amOnPage('/');
@@ -44,15 +56,12 @@ Scenario('check for css values', async ({ I }) => {
     });
     //get locators via request to css asset directly
     const locator = await getLocator(cssAsset);
-    const attribute = await getAttribute(cssAsset);
+    const css = await getAttribute(cssAsset);
     //wait for this locator to load on page
     I.waitForElement(locator);
-    const cssAttr = await I.grabCssPropertyFrom(locator, attribute);
-    /*VERIFICATION PART*/ 
-    //should use assetContain or assertEquals for css 
-    //but for now we have i.e. "backgrond:grey" and properties from above "rgb(128, 128, 128) none repeat scroll 0% 0% / auto padding-box border-box"
-    //We should define what to use: some conversion (rgb => text or vice versa). Or do we need check css values ​​at all.
-    console.log(cssAttr);
+    const cssAttr = await I.grabCssPropertyFrom(locator, css.attr);
+    //check if css from assets corresponds to what we see on page
+    I.assertContain(cssAttr, basicRBG[css.value]);
     await I.executeScript(async () => {
         eval(await evolv.client.getActiveKeys()).current.forEach(element => {
             //get list of active keys
@@ -63,5 +72,6 @@ Scenario('check for css values', async ({ I }) => {
     });
     //can check browser console logs for output
     const logs = await I.grabBrowserLogs();
-    console.log(logs);
+    //uncomment to see browser logs in test output
+    //console.log(logs);
 });
