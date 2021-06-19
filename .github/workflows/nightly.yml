@@ -29,7 +29,6 @@ jobs:
           npm test
         env:
           HOST_URL: "https://8s5ru.csb.app"
-          SHOW_BROWSER: false
       - name: Slack Notification (failure)
         if: failure()
         uses: rtCamp/action-slack-notify@v2.0.2
