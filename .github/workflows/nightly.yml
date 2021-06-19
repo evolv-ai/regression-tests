@@ -24,7 +24,9 @@ jobs:
         with:
           ref: ${{ github.event.push.after }}
       - name: Run e2e Tests
-        run: npm test
+        run:
+          npm install
+          npm test
         env:
           HOST_URL: "https://8s5ru.csb.app"
           SHOW_BROWSER: "false"
