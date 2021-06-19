@@ -24,7 +24,7 @@ jobs:
         with:
           ref: ${{ github.event.push.after }}
       - name: Run e2e Tests
-        run:
+        run: |
           npm install
           npm test
         env:
