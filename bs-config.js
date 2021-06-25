@@ -48,9 +48,6 @@ server.init({
 		baseDir: '.',
 		routes: {
 			'/': 'static/',
-			'/lib/sinon.js': 'node_modules/sinon/pkg/sinon.js',
-			'/sites': 'static/',
-			'/tests': 'e2e/tests'
 		}
 	},
     middleware: [
