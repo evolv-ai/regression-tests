@@ -8,8 +8,15 @@ const getLocator = async (string) => {
            return res.body;
         }else throw new Error('Something is wrong: '+res);
             
-    })
-    const locator = response.split(' ')[1].split('{')[0]; 
+    });
+    console.log("css from file: " + response);
+    let locator;
+    try {
+        locator = response.split('{')[0].trim().split(' ')[1]; 
+    } catch (error) {
+        throw new Error(error);
+    }
+    
     return locator;
 }
 
@@ -39,14 +46,21 @@ Scenario('check for css values', async ({ I }) => {
     I.amOnPage('/');
     //get evolv scripts and use 
     const scripts = await I.grabAttributeFromAll(locate('//head').find('script'),'src');
+    
+   
+
     await scripts.forEach(element => {
         if(element)
         if(element.includes('evolv')){
             console.log('Evolv script loaded: '+ element);
         }
     });
+    
     const links = await I.grabAttributeFromAll(locate('//head').find('link'),'href');
-    let cssAsset = '';
+    console.log(links);
+    
+    let cssAsset = null;
+    
     await links.forEach(element => {
         if(element)
         if(element.includes('evolv')){
@@ -55,6 +69,12 @@ Scenario('check for css values', async ({ I }) => {
         }
     });
     //get locators via request to css asset directly
+    if(!cssAsset){
+    
+        throw new Error('links does not contain evolv assets');
+        
+    }
+
     const locator = await getLocator(cssAsset);
     const css = await getAttribute(cssAsset);
     //wait for this locator to load on page
