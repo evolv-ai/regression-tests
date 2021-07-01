@@ -29,6 +29,7 @@
   },
   "dependencies": {
     "browser-sync": "^2.27.1",
+    "color-convert": "^2.0.1",
     "dotenv": "^10.0.0"
   }
 }
