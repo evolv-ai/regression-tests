@@ -6,30 +6,16 @@ const fs = require('fs');
 const path = require('path')
 const server = browserSync.create();
 
-const injectScript = function () {
-    
-    const filePath = path.join(__dirname, '/static/index.html');
-    console.log();
-    fs.readFile(filePath, 'utf8', function (err,data) {
-        if (err) {
-          return console.log(err);
-        }
+fs.writeFile('static/js/loader.js', `var script = document.createElement('script');
 
-
-        data = data.replace(/\$SRC/g, process.env.WEBLOADER_URL);
-        data = data.replace(/\$ENV/g, process.env.ENVIRONMENT_ID);
-        data = data.replace(/\$END/g, process.env.PARTICIPANT_URL);
-
-        fs.writeFile(filePath, data, function(err) {
-            if(err) {
-                return console.log(err);
-            }
-            console.log("The file was saved!");
-        }); 
-    });
-};
-
-injectScript();
+script.src = "${process.env.WEBLOADER_URL}";
+script.setAttribute('data-evolv-environment', "${process.env.ENVIRONMENT_ID}");
+script.setAttribute('data-evolv-timeout', "10000");
+script.setAttribute('data-evolv-endpoint', "${process.env.PARTICIPANT_URL}");
+document.getElementsByTagName('head')[0].appendChild(script);`, {flag:'w'}, function (err) {
+	if (err) throw err;
+	console.log('File is created successfully.');
+});
 
 server.init({
 	ui: {

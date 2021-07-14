@@ -48,12 +48,14 @@ const getAttribute = async (string) => {
            return res.body;
         }else throw new Error('Something is wrong: '+res);
             
-    })
-    const attr = response.split(' ')[1].split('{')[1].split(":")[0]; 
-    const value = response.split(' ')[1].split('{')[1].split(":")[1].slice(0, -1); 
-    const res = { attr:attr, value:value };
-    console.log(res);
-    return res;
+    });
+    if(response){
+        const attr = response.split(' ')[1].split('{')[1].split(":")[0]; 
+        const value = response.split(' ')[1].split('{')[1].split(":")[1].slice(0, -1); 
+        const res = { attr:attr, value:value };
+        console.log(res);
+        return res;
+    }else throw new Error('No changes to be checked with.');
 }
 
 Scenario('check for css values', async ({ I }) => {
@@ -101,13 +103,13 @@ Scenario('check for css values', async ({ I }) => {
     await I.executeScript(async () => {
         eval(await evolv.client.getActiveKeys()).current.forEach(element => {
             //get list of active keys
-            console.log(element);
+            console.log(`KEY:${element}`);
         });
       
         
     });
     //can check browser console logs for output
-    const logs = await I.grabBrowserLogs();
-    //uncomment to see browser logs in test output
-    //console.log(logs);
+    // const logs = await I.grabBrowserLogs();
+    // uncomment to see browser logs in test output
+    // console.log(logs);
 });
