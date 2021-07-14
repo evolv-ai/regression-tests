@@ -1,6 +1,28 @@
 const needle = require('needle');
+const convert = require('color-convert');
+ 
 
 Feature('css_check');
+
+const getAllocations = async (string) => {
+    //https://participants-newdev.evolvdev.com/v1/cecc5e6e80/700929_1625155142572/allocations
+    const uid = string.split('/')[string.split('/').length-2];
+    console.log(`${process.env.PARTICIPANT_URL}v1/${process.env.ENVIRONMENT_ID}/${uid}/allocations`);
+    const response = await needle('get', `${process.env.PARTICIPANT_URL}v1/${process.env.ENVIRONMENT_ID}/${uid}/allocations`).then((res)=>{
+        if (res.statusCode == 200){
+            res.body.forEach(element => {
+                for (const property in element.genome.web) {
+                    console.log(`${property}: ${element.genome.web[property]}`);
+                  }
+                
+            });
+           return res;
+        }else throw new Error('Something is wrong: '+res);
+            
+    })
+    
+    return response;
+}
 
 const getLocator = async (string) => {
     const response = await needle('get', string).then((res)=>{
@@ -26,21 +48,15 @@ const getAttribute = async (string) => {
            return res.body;
         }else throw new Error('Something is wrong: '+res);
             
-    })
-    const attr = response.split(' ')[1].split('{')[1].split(":")[0]; 
-    const value = response.split(' ')[1].split('{')[1].split(":")[1].slice(0, -1); 
-    const res = { attr:attr, value:value };
-    return res;
+    });
+    if(response){
+        const attr = response.split(' ')[1].split('{')[1].split(":")[0]; 
+        const value = response.split(' ')[1].split('{')[1].split(":")[1].slice(0, -1); 
+        const res = { attr:attr, value:value };
+        console.log(res);
+        return res;
+    }else throw new Error('No changes to be checked with.');
 }
-
-const basicRBG = {
-    red : 'rgb(255, 0, 0)',
-    yellow : 'rgb(255, 255, 0)',
-    grey : 'rgb(128, 128, 128)',
-    blue : 'rgb(0, 0, 255)',
-    green : 'rgb(0, 128, 0)'
-}
-
 
 Scenario('check for css values', async ({ I }) => {
     I.amOnPage('/');
@@ -48,16 +64,17 @@ Scenario('check for css values', async ({ I }) => {
     const scripts = await I.grabAttributeFromAll(locate('//head').find('script'),'src');
     
    
-
+    let allocations;
     await scripts.forEach(element => {
         if(element)
         if(element.includes('evolv')){
             console.log('Evolv script loaded: '+ element);
+            allocations = getAllocations(element);
         }
     });
     
     const links = await I.grabAttributeFromAll(locate('//head').find('link'),'href');
-    console.log(links);
+    
     
     let cssAsset = null;
     
@@ -81,17 +98,18 @@ Scenario('check for css values', async ({ I }) => {
     I.waitForElement(locator);
     const cssAttr = await I.grabCssPropertyFrom(locator, css.attr);
     //check if css from assets corresponds to what we see on page
-    I.assertContain(cssAttr, basicRBG[css.value]);
+    I.assertContain(cssAttr, convert.keyword.rgb(css.value).join(', ').toString());
+    
     await I.executeScript(async () => {
         eval(await evolv.client.getActiveKeys()).current.forEach(element => {
             //get list of active keys
-            console.log(element);
+            console.log(`KEY:${element}`);
         });
       
         
     });
     //can check browser console logs for output
-    const logs = await I.grabBrowserLogs();
-    //uncomment to see browser logs in test output
-    //console.log(logs);
+    // const logs = await I.grabBrowserLogs();
+    // uncomment to see browser logs in test output
+    // console.log(logs);
 });
