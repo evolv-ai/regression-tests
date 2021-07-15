@@ -1,4 +1,6 @@
-require('dotenv').config();
+require('dotenv').config({ path: `.env.${process.env.NODE_ENV || 'dev'}` });
+
+
 const browserSync =require('browser-sync');
 const querystring = require ('querystring');
 const url = require('url');
@@ -12,6 +14,7 @@ script.src = "${process.env.WEBLOADER_URL}";
 script.setAttribute('data-evolv-environment', "${process.env.ENVIRONMENT_ID}");
 script.setAttribute('data-evolv-timeout', "10000");
 script.setAttribute('data-evolv-endpoint', "${process.env.PARTICIPANT_URL}");
+script.setAttribute('data-evolv-uid', "${process.env.UID}");
 document.getElementsByTagName('head')[0].appendChild(script);`, {flag:'w'}, function (err) {
 	if (err) throw err;
 	console.log('File is created successfully.');

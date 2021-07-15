@@ -1,4 +1,4 @@
-require('dotenv').config();
+require('dotenv').config({ path: `.env.${process.env.NODE_ENV || 'dev'}` });
 exports.config = {
   tests: './tests/*_test.js',
   output: './output',

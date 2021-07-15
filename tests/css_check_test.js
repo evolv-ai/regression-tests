@@ -1,12 +1,10 @@
 const needle = require('needle');
 const convert = require('color-convert');
- 
 
 Feature('css_check');
 
 const getAllocations = async (string) => {
-    //https://participants-newdev.evolvdev.com/v1/cecc5e6e80/700929_1625155142572/allocations
-    const uid = string.split('/')[string.split('/').length-2];
+    const uid = process.env.UID;
     console.log(`${process.env.PARTICIPANT_URL}v1/${process.env.ENVIRONMENT_ID}/${uid}/allocations`);
     const response = await needle('get', `${process.env.PARTICIPANT_URL}v1/${process.env.ENVIRONMENT_ID}/${uid}/allocations`).then((res)=>{
         if (res.statusCode == 200){
