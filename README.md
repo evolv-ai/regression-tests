@@ -28,7 +28,7 @@ npx codeceptjs run ./tests/css_check_test.js
 ```
 
 ### Configuration for project
-create separate ```.env``` files for different environments ```.env.dev .env.prod .env.stage``` etc. 
+create separate ```.env``` files for different environments ```.env.dev .env.prod .env.stg``` etc. 
 .env 
 ```
 HOST_URL
