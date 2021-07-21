@@ -20,6 +20,7 @@ npx codeceptjs run ./tests/css_check_test.js
 ```
 
 ### To run on certain env use:
+
 ```
 "test": "npx codeceptjs run",
 "test:prod": "NODE_ENV=prod npx codeceptjs run",
@@ -28,13 +29,15 @@ npx codeceptjs run ./tests/css_check_test.js
 ```
 
 ### Configuration for project
-create separate ```.env``` files for different environments ```.env.dev .env.prod .env.stg``` etc. 
+Use ```.json``` files for different environments ```dev.json production.json stg.json``` etc in config folder in the root 
 .env 
 ```
-HOST_URL
-SHOW_BROWSER
-WEBLOADER_URL
-PARTICIPANT_URL
-ENVIRONMENT_ID
-UID
+{
+    "HOST_URL": "http://localhost:9090",
+    "SHOW_BROWSER":"true",
+    "WEBLOADER_URL":"<url>",
+    "PARTICIPANT_URL":"<url>",
+    "ENVIRONMENT_ID":"<env_id>",
+    "UID":"<uid>"
+}
 ```
