@@ -8,7 +8,12 @@
   },
   "scripts": {
     "test": "npx codeceptjs run",
-    "start:browser-sync": "node bs-config.js"
+    "start:browser-sync:prod": "NODE_ENV=prod node bs-config.js",
+    "start:browser-sync:dev": "NODE_ENV=dev node bs-config.js",
+    "start:browser-sync:stg": "NODE_ENV=stg node bs-config.js",
+    "test:prod": "NODE_ENV=prod npx codeceptjs run",
+    "test:dev": "NODE_ENV=dev npx codeceptjs run",
+    "test:stg": "NODE_ENV=stg npx codeceptjs run"
   },
   "repository": {
     "type": "git",
@@ -30,6 +35,6 @@
   "dependencies": {
     "browser-sync": "^2.27.1",
     "color-convert": "^2.0.1",
-    "dotenv": "^10.0.0"
+    "config": "^3.3.6"
   }
 }
