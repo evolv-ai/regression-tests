@@ -1,0 +1,49 @@
+name:
+  Run Nightly Jobs
+on:
+  workflow_dispatch: {}
+  schedule:
+    - cron: "0 0 * * *"
+
+jobs:
+  e2e:
+    name: Run e2e tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set Variables
+        id: set_variables
+        run: |
+          echo ::set-output name=SLACK_CHANNEL::nightly-runs
+          echo ::set-output name=SLACK_WEBHOOK::${{ secrets.NIGHTLY_RUNS_SLACK_WEBHOOK }}
+      - name: Set up Node
+        uses: actions/setup-node@v1
+        with:
+          node-version: '14'
+      - name: Checkout Ref
+        uses: actions/checkout@v1
+        with:
+          ref: ${{ github.event.push.after }}
+      - name: Run e2e Tests
+        run: |
+          npm install
+          npm test
+        env:
+          HOST_URL: "https://8s5ru.csb.app"
+      - name: Slack Notification (failure)
+        if: failure()
+        uses: rtCamp/action-slack-notify@v2.0.2
+        env:
+          SLACK_WEBHOOK: ${{ steps.set_variables.outputs.SLACK_WEBHOOK }}
+          SLACK_CHANNEL: ${{ steps.set_variables.outputs.SLACK_CHANNEL }}
+          SLACK_TITLE: '${{ github.repository }} regression tests failed :boom:'
+          SLACK_MESSAGE: 'regression tests on <https://github.com/${{ github.repository }}> failed.'
+          SLACK_COLOR: '#ff0000'
+      - name: Slack Notification (success)
+        if: success()
+        uses: rtCamp/action-slack-notify@v2.0.2
+        env:
+          SLACK_WEBHOOK: ${{ steps.set_variables.outputs.SLACK_WEBHOOK }}
+          SLACK_CHANNEL: ${{ steps.set_variables.outputs.SLACK_CHANNEL }}
+          SLACK_TITLE: '${{ github.repository }} regression tests success :rocket:'
+          SLACK_MESSAGE: 'regression tests on <https://github.com/${{ github.repository }}> succeeded.'
+          SLACK_COLOR: '#33cc33'
