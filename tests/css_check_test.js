@@ -3,7 +3,7 @@ const convert = require('color-convert');
 const config = require('config');
 Feature('css_check');
 
-const getAllocations = async (string) => {
+const getAllocations = async () => {
     const uid = config.get('UID');
     const response = await needle('get', `${config.get('PARTICIPANT_URL')}v1/${config.get('ENVIRONMENT_ID')}/${uid}/allocations`).then((res)=>{
         if (res.statusCode == 200){
@@ -14,6 +14,17 @@ const getAllocations = async (string) => {
                 
             });
            return res;
+        }else throw new Error('Something is wrong: '+res);
+            
+    })
+    
+    return response;
+}
+
+const getAssetsJSContent = async () => {
+    const response = await needle('get', `${config.get('PARTICIPANT_URL')}v1/${config.get('ENVIRONMENT_ID')}/${config.get('UID')}/assets.js`).then((res)=>{
+        if (res.statusCode == 200){
+           return res.body;
         }else throw new Error('Something is wrong: '+res);
             
     })
@@ -97,16 +108,17 @@ Scenario('check for css values', async ({ I }) => {
     //check if css from assets corresponds to what we see on page
     I.assertContain(cssAttr, convert.keyword.rgb(css.value).join(', ').toString());
     
-    await I.executeScript(async () => {
-        eval(await evolv.client.getActiveKeys()).current.forEach(element => {
-            //get list of active keys
-            console.log(`KEY:${element}`);
+    let activeKeys = await I.executeScript(async () => {
+        let keys = await evolv.client.getActiveKeys();
+        let formatedKeys = [];
+        keys.current.forEach(element => {
+            formatedKeys.push('evolv_'+element.replaceAll('.','_'));
         });
-      
-        
+        return formatedKeys;
+    })
+    let assetsjs = await getAssetsJSContent();
+    activeKeys.forEach(element => {
+        I.assertContain(assetsjs, element);
     });
-    //can check browser console logs for output
-    // const logs = await I.grabBrowserLogs();
-    // uncomment to see browser logs in test output
-    // console.log(logs);
+  
 });
