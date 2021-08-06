@@ -125,7 +125,7 @@ Scenario('Verification of active keys', async ({I})=>{
     })
     const expectedKeys = ['web.ju44cc698.znq3q7z08','web.ju44cc698','web.ju44cc698.3khie0czk'];
 
-    keys.forEach(element => {
+    expectedKeys.forEach(element => {
         I.assertContain(activeKeys, element);
     });
 })
