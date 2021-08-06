@@ -121,11 +121,7 @@ Scenario('Verification of active keys', async ({I})=>{
     I.amOnPage('/');
     let activeKeys = await I.executeScript(async () => {
         let keys = await evolv.client.getActiveKeys();
-        let formatedKeys = [];
-        keys.current.forEach(element => {
-            formatedKeys.push(element);
-        });
-        return formatedKeys;
+        return keys.current;
     })
     const keys = ['web.ju44cc698.znq3q7z08','web.ju44cc698','web.ju44cc698.3khie0czk'];
 
