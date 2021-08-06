@@ -102,11 +102,9 @@ Scenario('check for css values', async ({ I }) => {
             cssAsset = element;
         }
     });
-    //get locators via request to css asset directly
     if(!cssAsset){
     
-        throw new Error('links does not contain evolv assets');
-        
+        throw new Error('links does not contain evolv assets');  
     }
 
     const locator = await getLocator(cssAsset);
@@ -117,21 +115,21 @@ Scenario('check for css values', async ({ I }) => {
     //check if css from assets corresponds to what we see on page
     I.assertContain(cssAttr, convert.keyword.rgb(css.value).join(', ').toString());
     
+});
+
+Scenario('Verification of active keys', async ({I})=>{
+    I.amOnPage('/');
     let activeKeys = await I.executeScript(async () => {
         let keys = await evolv.client.getActiveKeys();
         let formatedKeys = [];
         keys.current.forEach(element => {
-            formatedKeys.push('evolv_'+element.replaceAll('.','_'));
+            formatedKeys.push(element);
         });
         return formatedKeys;
     })
-    
-    if(activeKeys.includes(config.get('ACTIVE_KEY'))){
-        console.log('Key is present');
-    }else{
-        throw new Error('Active key in not present.');
-    }
+    const keys = ['web.ju44cc698.znq3q7z08','web.ju44cc698','web.ju44cc698.3khie0czk'];
 
-    
-  
-});
+    keys.forEach(element => {
+        I.assertContain(activeKeys, element);
+    });
+})
