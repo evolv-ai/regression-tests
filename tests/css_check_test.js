@@ -14,7 +14,9 @@ const getAllocations = async () => {
                 
             });
            return res;
-        }else throw new Error('Something is wrong: '+res);
+        }else {
+            throw new Error('Something is wrong: '+res);
+        }
             
     })
     
@@ -25,7 +27,9 @@ const getAssetsJSContent = async () => {
     const response = await needle('get', `${config.get('PARTICIPANT_URL')}v1/${config.get('ENVIRONMENT_ID')}/${config.get('UID')}/assets.js`).then((res)=>{
         if (res.statusCode == 200){
            return res.body;
-        }else throw new Error('Something is wrong: '+res);
+        }else {
+            throw new Error('Something is wrong: '+res);
+        } 
             
     })
     
@@ -36,7 +40,9 @@ const getLocator = async (string) => {
     const response = await needle('get', string).then((res)=>{
         if (res.statusCode == 200){
            return res.body;
-        }else throw new Error('Something is wrong: '+res);
+        }else {
+            throw new Error('Something is wrong: '+res);
+        }
             
     });
     console.log("css from file: " + response);
@@ -54,8 +60,9 @@ const getAttribute = async (string) => {
     const response = await needle('get', string).then((res)=>{
         if (res.statusCode == 200){
            return res.body;
-        }else throw new Error('Something is wrong: '+res);
-            
+        }else {
+            throw new Error('Something is wrong: '+res);
+        }    
     });
     if(response){
         const attr = response.split(' ')[1].split('{')[1].split(":")[0]; 
@@ -63,7 +70,9 @@ const getAttribute = async (string) => {
         const res = { attr:attr, value:value };
         console.log(res);
         return res;
-    }else throw new Error('No changes to be checked with.');
+    }else {
+        throw new Error('No changes to be checked with.');
+    }
 }
 
 Scenario('check for css values', async ({ I }) => {
@@ -116,9 +125,13 @@ Scenario('check for css values', async ({ I }) => {
         });
         return formatedKeys;
     })
-    let assetsjs = await getAssetsJSContent();
-    activeKeys.forEach(element => {
-        I.assertContain(assetsjs, element);
-    });
+    
+    if(activeKeys.includes(config.get('ACTIVE_KEY'))){
+        console.log('Key is present');
+    }else{
+        throw new Error('Active key in not present.');
+    }
+
+    
   
 });
