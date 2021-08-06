@@ -1,0 +1,344 @@
+_version: "2"
+_name: Untitled Project
+_metadata:
+  base_url: ""
+  controlsEditable: false
+  treeShakeDependencies: false
+  dependencies: []
+  deviceSettings:
+    device:
+      show-by-default: true
+      title: iPhone X
+      screen:
+        horizontal:
+          width: 812
+          height: 375
+        device-pixel-ratio: 3
+        vertical:
+          width: 375
+          height: 812
+      capabilities:
+        - touch
+        - mobile
+      user-agent: Mozilla/5.0 (iPhone; CPU iPhone OS 11_0 like Mac OS X) AppleWebKit/604.1.38 (KHTML, like Gecko) Version/11.0 Mobile/15A372 Safari/604.1
+      type: phone
+      modes:
+        - title: default
+          orientation: vertical
+          insets:
+            left: 0
+            top: 0
+            right: 0
+            bottom: 0
+        - title: default
+          orientation: horizontal
+          insets:
+            left: 0
+            top: 0
+            right: 0
+            bottom: 0
+    orientation: vertical
+    zoomFactor: 1
+  updated_by:
+    id: auth0|60c03598e483480071a51698
+    name: vlad.vn
+  updated_at: 1624628825418
+  moved_to_live_by:
+    id: auth0|60c03598e483480071a51698
+    name: vlad.vn
+  moved_to_live_at: 1624628838227
+web:
+  ju44cc698:
+    _id: ju44cc698
+    _display_name: Home
+    _metadata:
+      page_def:
+        is_entry_context: true
+        domain_match_type: none
+        path_match_type: simple
+        reference_urls:
+          - https://8s5ru.csb.app/
+        _pattern: ""
+      script: ""
+      styles: ""
+      timing: immediate
+      timingSelectors: []
+    _disable: false
+    3khie0czk:
+      _id: 3khie0czk
+      _display_name: Learn More Color
+      _metadata: {}
+      _disable: false
+      _values:
+        - _display_name: Noop
+          _metadata:
+            generated_control: true
+          _value:
+            id: kn8a6j13w
+            type: compound
+            _metadata: {}
+            script: ""
+            styles: ""
+            timing: immediate
+            timingSelectors: []
+          _screenshots: []
+          _disable: false
+        - _display_name: Green
+          _metadata: {}
+          _value:
+            id: giujlbjvt
+            type: compound
+            _metadata: {}
+            script: console.log('GREEN')
+            styles: |-
+              #learn {
+                background: green;
+              }
+            timing: immediate
+            timingSelectors: []
+          _screenshots: []
+          _disable: false
+        - _display_name: Red
+          _metadata: {}
+          _value:
+            id: b76gexdl9
+            type: compound
+            _metadata: {}
+            script: console.log('RED')
+            styles: |-
+              #learn {
+                background: red;
+              }
+            timing: immediate
+            timingSelectors: []
+          _screenshots: []
+          _disable: false
+        - _display_name: Yellow
+          _metadata: {}
+          _value:
+            id: zpg46y1e9
+            type: compound
+            _metadata: {}
+            script: console.log('YELLOW')
+            styles: |-
+              #learn {
+                background: yellow;
+              }
+            timing: immediate
+            timingSelectors: []
+          _screenshots: []
+          _disable: false
+        - _display_name: Grey
+          _metadata: {}
+          _value:
+            id: q9l5e1k8u
+            type: compound
+            _metadata: {}
+            script: console.log('GREY')
+            styles: |-
+              #learn {
+                background: Grey;
+              }
+            timing: immediate
+            timingSelectors: []
+          _screenshots: []
+          _disable: false
+    znq3q7z08:
+      _id: znq3q7z08
+      _display_name: Checkout Color
+      _metadata: {}
+      _disable: false
+      _values:
+        - _display_name: Noop
+          _metadata:
+            generated_control: true
+          _value:
+            id: 3xm7vm73s
+            type: compound
+            _metadata: {}
+            script: ""
+            styles: ""
+            timing: immediate
+            timingSelectors: []
+          _screenshots: []
+          _disable: false
+        - _display_name: Green
+          _metadata: {}
+          _value:
+            id: mb87a6v1h
+            type: compound
+            _metadata: {}
+            script: ""
+            styles: |-
+              #checkout {
+                background: green;
+              }
+            timing: immediate
+            timingSelectors: []
+          _screenshots: []
+          _disable: false
+        - _display_name: Red
+          _metadata: {}
+          _value:
+            id: w6le08ifq
+            type: compound
+            _metadata: {}
+            script: ""
+            styles: |-
+              #checkout {
+                background: red;
+              }
+            timing: immediate
+            timingSelectors: []
+          _screenshots: []
+          _disable: false
+        - _display_name: Yellow
+          _metadata: {}
+          _value:
+            id: o18lttnbi
+            type: compound
+            _metadata: {}
+            script: ""
+            styles: |-
+              #checkout {
+                background: yellow;
+              }
+            timing: immediate
+            timingSelectors: []
+          _screenshots: []
+          _disable: false
+        - _display_name: Grey
+          _metadata: {}
+          _value:
+            id: jfa1qfa4v
+            type: compound
+            _metadata: {}
+            script: ""
+            styles: |-
+              #checkout {
+                background: grey;
+              }
+            timing: immediate
+            timingSelectors: []
+          _screenshots: []
+          _disable: false
+    _config:
+      _id: ju44cc698
+      _type: url
+      _is_entry_point: true
+      _predicate:
+        combinator: and
+        rules:
+          - field: web.url
+            operator: regex64_match
+            value: L2h0dHBzPzpcL1wvW14vXStcL1wvPyg/OiR8XD98IykvaQ==
+      _initializers: []
+  7x2ubqgla:
+    _id: 7x2ubqgla
+    _display_name: Dashboard
+    _metadata:
+      page_def:
+        is_entry_context: true
+        domain_match_type: none
+        path_match_type: simple
+        reference_urls:
+          - https://8s5ru.csb.app/dashboard.html
+        _pattern: dashboard.html
+      script: ""
+      styles: ""
+      timing: immediate
+      timingSelectors: []
+    _disable: false
+    9lwoucuvz:
+      _id: 9lwoucuvz
+      _display_name: Header color
+      _metadata: {}
+      _disable: true
+      _values:
+        - _display_name: Noop
+          _metadata:
+            generated_control: true
+          _value:
+            id: esj5mthyc
+            type: compound
+            _metadata: {}
+            script: ""
+            styles: ""
+            timing: immediate
+            timingSelectors: []
+          _screenshots: []
+          _disable: false
+          _control: true
+        - _display_name: Blue
+          _metadata: {}
+          _value:
+            id: pphne6kvy
+            type: compound
+            _metadata: {}
+            script: ""
+            styles: |-
+              .col-md-4:nth-child(1) > h2 {
+                background: blue;
+              }
+            timing: immediate
+            timingSelectors: []
+          _screenshots: []
+          _disable: false
+          _control: false
+        - _display_name: Green
+          _metadata: {}
+          _value:
+            id: qwdma4fyv
+            type: compound
+            _metadata: {}
+            script: ""
+            styles: |-
+              .col-md-4:nth-child(1) > h2 {
+                background: green;
+              }
+            timing: immediate
+            timingSelectors: []
+          _screenshots: []
+          _disable: false
+          _control: false
+        - _display_name: Yellow
+          _metadata: {}
+          _value:
+            id: wscnwnmeb
+            type: compound
+            _metadata: {}
+            script: ""
+            styles: |-
+              .col-md-4:nth-child(1) > h2 {
+                background: yellow;
+              }
+            timing: immediate
+            timingSelectors: []
+          _screenshots: []
+          _disable: false
+          _control: false
+      _description: ""
+      _config:
+        _id: 9lwoucuvz
+        _type: manual
+        _is_entry_point: false
+        _predicate: null
+        _initializers: []
+    _config:
+      _id: 7x2ubqgla
+      _type: url
+      _is_entry_point: true
+      _predicate:
+        combinator: and
+        rules:
+          - field: web.url
+            operator: regex64_match
+            value: L2h0dHBzPzpcL1wvW14vXStcL2Rhc2hib2FyZFwuaHRtbFwvPyg/OiR8XD98IykvaQ==
+      _initializers: []
+  _combination_previews:
+    - uri: evolv-web://view/{account_id}/{metamodel_id}/{metamodel_version}?project_name={project_name}&combination={combination}
+      display_name: Preview in Web Editor
+    - uri: https://8s5ru.csb.app/#evolvCandidateToken={candidate_token}
+      display_name: Preview in Browser
+  _config:
+    dependencies: ""
