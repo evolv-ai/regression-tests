@@ -1,5 +1,5 @@
 const config = require('config');
-const browserSync =require('browser-sync');
+const browserSync = require('browser-sync');
 const querystring = require ('querystring');
 const url = require('url');
 const fs = require('fs');
