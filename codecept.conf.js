@@ -1,11 +1,11 @@
-require('dotenv').config();
+const config = require('config');
 exports.config = {
   tests: './tests/*_test.js',
   output: './output',
   helpers: {
     Puppeteer: {
-      url: process.env.HOST_URL,
-      show: process.env.SHOW_BROWSER,
+      url: config.get('HOST_URL'),
+      show: config.get('SHOW_BROWSER'),
       windowSize: '1200x900'
     },
     "ChaiWrapper" : {

@@ -1,14 +1,11 @@
 const needle = require('needle');
 const convert = require('color-convert');
- 
-
+const config = require('config');
 Feature('css_check');
 
-const getAllocations = async (string) => {
-    //https://participants-newdev.evolvdev.com/v1/cecc5e6e80/700929_1625155142572/allocations
-    const uid = string.split('/')[string.split('/').length-2];
-    console.log(`${process.env.PARTICIPANT_URL}v1/${process.env.ENVIRONMENT_ID}/${uid}/allocations`);
-    const response = await needle('get', `${process.env.PARTICIPANT_URL}v1/${process.env.ENVIRONMENT_ID}/${uid}/allocations`).then((res)=>{
+const getAllocations = async () => {
+    const uid = config.get('UID');
+    const response = await needle('get', `${config.get('PARTICIPANT_URL')}v1/${config.get('ENVIRONMENT_ID')}/${uid}/allocations`).then((res)=>{
         if (res.statusCode == 200){
             res.body.forEach(element => {
                 for (const property in element.genome.web) {
@@ -17,7 +14,22 @@ const getAllocations = async (string) => {
                 
             });
            return res;
-        }else throw new Error('Something is wrong: '+res);
+        }else {
+            throw new Error('Something is wrong: '+res);
+        }
+            
+    })
+    
+    return response;
+}
+
+const getAssetsJSContent = async () => {
+    const response = await needle('get', `${config.get('PARTICIPANT_URL')}v1/${config.get('ENVIRONMENT_ID')}/${config.get('UID')}/assets.js`).then((res)=>{
+        if (res.statusCode == 200){
+           return res.body;
+        }else {
+            throw new Error('Something is wrong: '+res);
+        } 
             
     })
     
@@ -28,7 +40,9 @@ const getLocator = async (string) => {
     const response = await needle('get', string).then((res)=>{
         if (res.statusCode == 200){
            return res.body;
-        }else throw new Error('Something is wrong: '+res);
+        }else {
+            throw new Error('Something is wrong: '+res);
+        }
             
     });
     console.log("css from file: " + response);
@@ -46,14 +60,19 @@ const getAttribute = async (string) => {
     const response = await needle('get', string).then((res)=>{
         if (res.statusCode == 200){
            return res.body;
-        }else throw new Error('Something is wrong: '+res);
-            
-    })
-    const attr = response.split(' ')[1].split('{')[1].split(":")[0]; 
-    const value = response.split(' ')[1].split('{')[1].split(":")[1].slice(0, -1); 
-    const res = { attr:attr, value:value };
-    console.log(res);
-    return res;
+        }else {
+            throw new Error('Something is wrong: '+res);
+        }    
+    });
+    if(response){
+        const attr = response.split(' ')[1].split('{')[1].split(":")[0]; 
+        const value = response.split(' ')[1].split('{')[1].split(":")[1].slice(0, -1); 
+        const res = { attr:attr, value:value };
+        console.log(res);
+        return res;
+    }else {
+        throw new Error('No changes to be checked with.');
+    }
 }
 
 Scenario('check for css values', async ({ I }) => {
@@ -83,11 +102,9 @@ Scenario('check for css values', async ({ I }) => {
             cssAsset = element;
         }
     });
-    //get locators via request to css asset directly
     if(!cssAsset){
     
-        throw new Error('links does not contain evolv assets');
-        
+        throw new Error('links does not contain evolv assets');  
     }
 
     const locator = await getLocator(cssAsset);
@@ -98,16 +115,17 @@ Scenario('check for css values', async ({ I }) => {
     //check if css from assets corresponds to what we see on page
     I.assertContain(cssAttr, convert.keyword.rgb(css.value).join(', ').toString());
     
-    await I.executeScript(async () => {
-        eval(await evolv.client.getActiveKeys()).current.forEach(element => {
-            //get list of active keys
-            console.log(element);
-        });
-      
-        
-    });
-    //can check browser console logs for output
-    const logs = await I.grabBrowserLogs();
-    //uncomment to see browser logs in test output
-    //console.log(logs);
 });
+
+Scenario('Verification of active keys', async ({I})=>{
+    I.amOnPage('/');
+    let activeKeys = await I.executeScript(async () => {
+        let keys = await evolv.client.getActiveKeys();
+        return keys.current;
+    })
+    const expectedKeys = ['web.ju44cc698.znq3q7z08','web.ju44cc698','web.ju44cc698.3khie0czk'];
+
+    expectedKeys.forEach(element => {
+        I.assertContain(activeKeys, element);
+    });
+})
