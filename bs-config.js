@@ -1,5 +1,5 @@
 const config = require('config');
-const browserSync =require('browser-sync');
+const browserSync = require('browser-sync');
 const querystring = require ('querystring');
 const url = require('url');
 const fs = require('fs');
@@ -57,7 +57,7 @@ server.init({
 	logConnections: false,
 	logFileChanges: true,
 	logSnippet: true,
-	open: true,
+	open: false,
 	startPath: '/',
 	browser: 'default',
 	cors: false,
