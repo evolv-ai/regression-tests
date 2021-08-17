@@ -7,7 +7,7 @@
     "test": "tests"
   },
   "scripts": {
-    "test": "npx codeceptjs run",
+    "test": "concurrently --kill-others \"node bs-config.js\" \"npx codeceptjs run\"",
     "start:browser-sync:prod": "NODE_ENV=prod node bs-config.js",
     "start:browser-sync:dev": "NODE_ENV=dev node bs-config.js",
     "start:browser-sync:stg": "NODE_ENV=stg node bs-config.js",
@@ -35,6 +35,7 @@
   "dependencies": {
     "browser-sync": "^2.27.1",
     "color-convert": "^2.0.1",
+    "concurrently": "^6.2.1",
     "config": "^3.3.6"
   }
 }
