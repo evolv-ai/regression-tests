@@ -57,7 +57,7 @@ server.init({
 	logConnections: false,
 	logFileChanges: true,
 	logSnippet: true,
-	open: true,
+	open: false,
 	startPath: '/',
 	browser: 'default',
 	cors: false,
