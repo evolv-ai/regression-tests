@@ -77,3 +77,7 @@ server.init({
 	timestamps: true,
 	injectNotification: false
 });
+
+setTimeout(function () {
+    bs.exit();
+}, 5000);
