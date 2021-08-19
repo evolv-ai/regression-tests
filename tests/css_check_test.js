@@ -1,7 +1,6 @@
 const needle = require('needle');
 const convert = require('color-convert');
 const config = require('config');
-//const bsServerExit = require('../bs-config')
 Feature('css_check');
 
 const getAllocations = async () => {
@@ -46,7 +45,7 @@ const getLocator = async (string) => {
         }
             
     });
-    console.log("css from file: " + response);
+   
     let locator;
     try {
         locator = response.split('{')[0].trim().split(' ')[1]; 
@@ -86,7 +85,6 @@ Scenario('check for css values', async ({ I }) => {
     await scripts.forEach(element => {
         if(element)
         if(element.includes('evolv')){
-            console.log('Evolv script loaded: '+ element);
             allocations = getAllocations(element);
         }
     });
@@ -99,7 +97,6 @@ Scenario('check for css values', async ({ I }) => {
     await links.forEach(element => {
         if(element)
         if(element.includes('evolv')){
-            console.log('Evolv css asset loaded: '+ element);
             cssAsset = element;
         }
     });
@@ -130,7 +127,3 @@ Scenario('Verification of active keys', async ({I})=>{
         I.assertContain(activeKeys, element);
     });
 })
-
-// After(async () => {
-//     bsServerExit();
-// });
