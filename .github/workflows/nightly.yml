@@ -26,9 +26,9 @@ jobs:
       - name: Run e2e Tests
         run: |
           npm install
-          npm test
+          npm run actions
         env:
-          HOST_URL: "https://8s5ru.csb.app"
+          HOST_URL: "http://localhost:9090/"
       - name: Slack Notification (failure)
         if: failure()
         uses: rtCamp/action-slack-notify@v2.0.2
