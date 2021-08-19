@@ -79,5 +79,5 @@ server.init({
 });
 
 
-let serverExit = function() { server.exit() };
+let serverExit = function() { server.cleanup(); };
 module.exports = serverExit;

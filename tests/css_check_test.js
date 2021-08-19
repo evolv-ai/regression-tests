@@ -1,7 +1,7 @@
 const needle = require('needle');
 const convert = require('color-convert');
 const config = require('config');
-const bsServerExit = require('../bs-config')
+//const bsServerExit = require('../bs-config')
 Feature('css_check');
 
 const getAllocations = async () => {
@@ -131,6 +131,6 @@ Scenario('Verification of active keys', async ({I})=>{
     });
 })
 
-After(async () => {
-    bsServerExit();
-});
+// After(async () => {
+//     bsServerExit();
+// });
