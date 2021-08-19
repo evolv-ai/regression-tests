@@ -77,3 +77,7 @@ server.init({
 	timestamps: true,
 	injectNotification: false
 });
+
+
+let serverExit = function() { server.cleanup(); };
+module.exports = serverExit;

@@ -45,7 +45,7 @@ const getLocator = async (string) => {
         }
             
     });
-    console.log("css from file: " + response);
+   
     let locator;
     try {
         locator = response.split('{')[0].trim().split(' ')[1]; 
@@ -85,7 +85,6 @@ Scenario('check for css values', async ({ I }) => {
     await scripts.forEach(element => {
         if(element)
         if(element.includes('evolv')){
-            console.log('Evolv script loaded: '+ element);
             allocations = getAllocations(element);
         }
     });
@@ -98,7 +97,6 @@ Scenario('check for css values', async ({ I }) => {
     await links.forEach(element => {
         if(element)
         if(element.includes('evolv')){
-            console.log('Evolv css asset loaded: '+ element);
             cssAsset = element;
         }
     });

@@ -8,7 +8,7 @@
   },
   "scripts": {
     "test": "concurrently --kill-others \"node bs-config.js\" \"npx codeceptjs run\"",
-    "actions": "concurrently --kill-others \"node bs-config.js\" \"npx codeceptjs run\"",
+    "actions": "node run-tests.js",
     "start:browser-sync:prod": "NODE_ENV=prod node bs-config.js",
     "start:browser-sync:dev": "NODE_ENV=dev node bs-config.js",
     "start:browser-sync:stg": "NODE_ENV=stg node bs-config.js",
@@ -37,6 +37,7 @@
     "browser-sync": "^2.27.1",
     "color-convert": "^2.0.1",
     "concurrently": "^6.2.1",
-    "config": "^3.3.6"
+    "config": "^3.3.6",
+    "util": "^0.12.4"
   }
 }
