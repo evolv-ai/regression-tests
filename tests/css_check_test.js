@@ -1,6 +1,8 @@
 const needle = require('needle');
 const convert = require('color-convert');
 const config = require('config');
+const { ConsoleMessage } = require('puppeteer');
+
 Feature('css_check');
 
 const getAllocations = async () => {
@@ -125,5 +127,18 @@ Scenario('Verification of active keys', async ({I})=>{
 
     expectedKeys.forEach(element => {
         I.assertContain(activeKeys, element);
+    });
+});
+
+Scenario('Verification of JS execution', async ({I})=>{
+    I.amOnPage('/');
+    const browserLogs = await I.grabBrowserLogs();
+    let consoleMessages = [];
+    browserLogs.forEach(element=>{
+        if(element._type === 'log'){
+            consoleMessages.push(element._text);
+    }});
+    consoleMessages.forEach(element => {
+        I.assertContain(element, 'hello');
     });
 })
