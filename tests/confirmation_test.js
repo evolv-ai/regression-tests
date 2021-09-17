@@ -1,7 +1,9 @@
 Feature('confirmation');
 
 Scenario('Verification of confirmation events', async ({ I }) => {
-    I.amOnPage('/');
+    //arrange
+    //act
+    I.amOnPage('/clone.html');
     let confirmations = await I.executeScript(async () => {
         let confirmationsArray = [];
         evolv.context.remoteContext.confirmations.forEach(element => {
@@ -10,5 +12,6 @@ Scenario('Verification of confirmation events', async ({ I }) => {
         return confirmationsArray;
        
     });
+    //assert
     I.assertNotEqual(confirmations.length, 0);
 });

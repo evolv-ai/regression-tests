@@ -11,10 +11,27 @@
 
     <link href="css/bootstrap.css" rel="stylesheet" />
     <link href="css/index.css" rel="stylesheet" />
-    <script
-      src="https://media.evolv.ai/releases/next/scout.js"
-      data-evolv-environment="changeme"
-    ></script>
+
+    <!--data-evolv-environment="619f15bb6a" - this is the mutually exclusive contexts-->
+    <!-- Go to / and the home context should match, confirmation events for 'Mutually Exclusive Contexts' project-->
+    <!-- Go to /product.html and the product context should match, no confirmation events should fire as it is a non entry page-->
+    <!-- Go to /dashboard and the dashboard context should match, confirmation events for 'Dashboard only' project-->
+
+    <!--data-evolv-environment="57ba3d9272" - this is the overlapping contexts-->
+    <!-- Go to / and the all context should match, confirmation events for 'With All Context' project-->
+    <!-- Go to /dashboard.html and the all context and dashboard should match, confirmation events for 'With All Context' and 'Dashboard only' projects-->
+
+    <script src="js/loader.js" type="text/javascript"></script>
+
+    <script>
+      // code for asset manager
+      setTimeout(function () {
+        document.querySelector("#learn").onclick = function () {
+          window.evolv.client.emit("clicked-learn");
+        };
+      }, 1000);
+    </script>
+
     <style>
       #checkout {
         background-image: -webkit-linear-gradient(
@@ -49,10 +66,15 @@
             >
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="dashboard.html">Dashboard</a>
+            <a class="nav-link" href="dashboard">Dashboard</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="product.html">Product</a>
+            <a
+              class="nav-link"
+              href="product.html"
+              onclick="evolv.client.emit('IMAEVENT')"
+              >Product</a
+            >
           </li>
           <li class="nav-item">
             <a class="nav-link" href="checkout.html">Checkout</a>
@@ -98,7 +120,7 @@
       <!-- Main jumbotron for a primary marketing message or call to action -->
       <div class="jumbotron">
         <div class="container">
-          <h1 class="display-3">Clone of Hello, world!</h1>
+          <h1 class="display-3">CLONE</h1>
           <p>
             This is a template for a simple marketing or informational website.
             It includes a large callout called a jumbotron and three supporting
@@ -179,6 +201,11 @@
     <footer class="container">
       <p>&copy; Company 2017-2018</p>
     </footer>
+    <script>
+      (function () {
+        console.log("hello");
+      })();
+    </script>
 
     <script src="lib/js/jquery.js"></script>
     <script src="lib/js/popper.min.js"></script>
