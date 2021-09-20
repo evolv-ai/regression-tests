@@ -2,7 +2,7 @@ const needle = require('needle');
 const convert = require('color-convert');
 const config = require('config');
 
-Feature('css_check');
+Feature('multiproject');
 //arrange
 const getAllocations = async () => {
     const uid = config.get('UID');
@@ -74,10 +74,11 @@ const getCssAttribute = async (string) => {
     return result;
 }
 
-Scenario('check for css values', async ({ I }) => {
+Scenario('Verify changes when both experiments matching', async ({ I }) => {
     let cssAsset = null;
     //act
     I.amOnPage('/clone.html');
+    pause();
     const scripts = await I.grabAttributeFromAll(locate('//head').find('script'),'src');
     await scripts.forEach(element => {
         if(element)
@@ -109,3 +110,110 @@ Scenario('check for css values', async ({ I }) => {
         I.assertContain(cssAttr, convert.keyword.rgb(css[locator.indexOf(element)].value).join(', ').toString());
     });
 });
+
+Scenario('Verify changes when first experiment matching', async ({ I }) => {
+    let cssAsset = null;
+    //act
+    I.amOnPage('/');
+    const scripts = await I.grabAttributeFromAll(locate('//head').find('script'),'src');
+    await scripts.forEach(element => {
+        if(element)
+        if(element.includes('evolv')){
+            allocations = getAllocations(element);
+        }
+    });
+    
+    const links = await I.grabAttributeFromAll(locate('//head').find('link'),'href');
+   
+    await links.forEach(element => {
+        if(element)
+        if(element.includes('evolv')){
+            cssAsset = element;
+        }
+    });
+    if(!cssAsset){
+    
+        throw new Error('links does not contain evolv assets');  
+    }
+
+    const locator = await getCssLocator(cssAsset);
+    const css = await getCssAttribute(cssAsset);
+   
+    //assert
+   
+    I.waitForElement(locator[1]);
+    let cssAttr = await I.grabCssPropertyFrom(locator[1], css[1].attr);
+    I.assertContain(cssAttr, convert.keyword.rgb(css[1].value).join(', ').toString());
+});
+
+Scenario('Verify changes when second experiment matching', async ({ I }) => {
+    let cssAsset = null;
+    //act
+    I.amOnPage('/clone1.html');
+    const scripts = await I.grabAttributeFromAll(locate('//head').find('script'),'src');
+    await scripts.forEach(element => {
+        if(element)
+        if(element.includes('evolv')){
+            allocations = getAllocations(element);
+        }
+    });
+    
+    const links = await I.grabAttributeFromAll(locate('//head').find('link'),'href');
+   
+    await links.forEach(element => {
+        if(element)
+        if(element.includes('evolv')){
+            cssAsset = element;
+        }
+    });
+    if(!cssAsset){
+    
+        throw new Error('links does not contain evolv assets');  
+    }
+
+    const locator = await getCssLocator(cssAsset);
+    const css = await getCssAttribute(cssAsset);
+   
+    //assert
+   
+    I.waitForElement(locator[1]);
+    let cssAttr = await I.grabCssPropertyFrom(locator[0], css[0].attr);
+    I.assertContain(cssAttr, convert.keyword.rgb(css[0].value).join(', ').toString());
+});
+
+Scenario('Verify changes when none of experiment matching', async ({ I }) => {
+    let cssAsset = null;
+    //act
+    I.amOnPage('/');
+    const scripts = await I.grabAttributeFromAll(locate('//head').find('script'),'src');
+    await scripts.forEach(element => {
+        if(element)
+        if(element.includes('evolv')){
+            allocations = getAllocations(element);
+        }
+    });
+    
+    const links = await I.grabAttributeFromAll(locate('//head').find('link'),'href');
+   
+    await links.forEach(element => {
+        if(element)
+        if(element.includes('evolv')){
+            cssAsset = element;
+        }
+    });
+    if(!cssAsset){
+    
+        throw new Error('links does not contain evolv assets');  
+    }
+
+    const locator = await getCssLocator(cssAsset);
+    const css = await getCssAttribute(cssAsset);
+   
+    //assert
+   
+    I.waitForElement(locator[1]);
+    let cssAttr = await I.grabCssPropertyFrom(locator[1], css[1].attr);
+    I.assertContain(cssAttr, convert.keyword.rgb(css[1].value).join(', ').toString());
+});
+
+
