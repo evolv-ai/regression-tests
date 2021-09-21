@@ -1,44 +1,23 @@
 const needle = require('needle');
 const convert = require('color-convert');
 const config = require('config');
-const { ConsoleMessage } = require('puppeteer');
 
 Feature('css_check');
-
+//Arrange
 const getAllocations = async () => {
     const uid = config.get('UID');
     const response = await needle('get', `${config.get('PARTICIPANT_URL')}v1/${config.get('ENVIRONMENT_ID')}/${uid}/allocations`).then((res)=>{
-        if (res.statusCode == 200){
-            res.body.forEach(element => {
-                for (const property in element.genome.web) {
-                    console.log(`${property}: ${element.genome.web[property]}`);
-                  }
-                
-            });
+        if (res.statusCode == 200) {       
            return res;
-        }else {
+        } else {
             throw new Error('Something is wrong: '+res);
         }
             
     })
-    
     return response;
 }
 
-const getAssetsJSContent = async () => {
-    const response = await needle('get', `${config.get('PARTICIPANT_URL')}v1/${config.get('ENVIRONMENT_ID')}/${config.get('UID')}/assets.js`).then((res)=>{
-        if (res.statusCode == 200){
-           return res.body;
-        }else {
-            throw new Error('Something is wrong: '+res);
-        } 
-            
-    })
-    
-    return response;
-}
-
-const getLocator = async (string) => {
+const getCssLocator = async (string) => {
     const response = await needle('get', string).then((res)=>{
         if (res.statusCode == 200){
            return res.body;
@@ -47,55 +26,62 @@ const getLocator = async (string) => {
         }
             
     });
-   
-    let locator;
+    let locatorValues = response.split("\n");
+    
     try {
-        locator = response.split('{')[0].trim().split(' ')[1]; 
+        locatorValues.forEach(element => {
+            element = element.split('{')[0].trim().split(' ')[1];
+        });
     } catch (error) {
         throw new Error(error);
-    }
-    
-    return locator;
+    } 
+    const filteredValues = locatorValues.filter(value => value.length > 2);
+    const result = filteredValues.map(value => value.split(' ')[1].split('{')[0]);
+    return result;
 }
 
-const getAttribute = async (string) => {
+const getCssAttribute = async (string) => {
     const response = await needle('get', string).then((res)=>{
         if (res.statusCode == 200){
            return res.body;
         }else {
             throw new Error('Something is wrong: '+res);
-        }    
+        }
+            
     });
-    if(response){
-        const attr = response.split(' ')[1].split('{')[1].split(":")[0]; 
-        const value = response.split(' ')[1].split('{')[1].split(":")[1].slice(0, -1); 
-        const res = { attr:attr, value:value };
-        console.log(res);
-        return res;
-    }else {
-        throw new Error('No changes to be checked with.');
-    }
+    let locatorValues = response.split("\n");
+    try {
+        locatorValues.forEach(element => {
+            element = element.split('{')[0].trim().split(' ')[1];
+        });
+    } catch (error) {
+        throw new Error(error);
+    } 
+    const filteredValues = locatorValues.filter(value => value.length > 2);
+    const result = filteredValues.map(value => {
+        let cssObj = {attr:value.split(' ')[1].split('{')[1].split(":")[0],
+        value: value.split(' ')[1].split('{')[1].split(":")[1].slice(0, -1)};
+        return cssObj;
+    });
+    console.log(result);
+    return result;
 }
 
-Scenario('check for css values', async ({ I }) => {
-    I.amOnPage('/');
-    //get evolv scripts and use 
-    const scripts = await I.grabAttributeFromAll(locate('//head').find('script'),'src');
+Scenario('Verify changes when both experiments matching', async ({ I }) => {
+    let cssAsset = null;
+    //Act
+    I.amOnPage('/index.html');
     
-   
-    let allocations;
+    const scripts = await I.grabAttributeFromAll(locate('//head').find('script'),'src');
     await scripts.forEach(element => {
         if(element)
         if(element.includes('evolv')){
-            allocations = getAllocations(element);
+            allocations = getAllocations();
         }
     });
     
     const links = await I.grabAttributeFromAll(locate('//head').find('link'),'href');
-    
-    
-    let cssAsset = null;
-    
+   
     await links.forEach(element => {
         if(element)
         if(element.includes('evolv')){
@@ -107,38 +93,13 @@ Scenario('check for css values', async ({ I }) => {
         throw new Error('links does not contain evolv assets');  
     }
 
-    const locator = await getLocator(cssAsset);
-    const css = await getAttribute(cssAsset);
-    //wait for this locator to load on page
-    I.waitForElement(locator);
-    const cssAttr = await I.grabCssPropertyFrom(locator, css.attr);
-    //check if css from assets corresponds to what we see on page
-    I.assertContain(cssAttr, convert.keyword.rgb(css.value).join(', ').toString());
-    
-});
-
-Scenario('Verification of active keys', async ({I})=>{
-    I.amOnPage('/');
-    let activeKeys = await I.executeScript(async () => {
-        let keys = await evolv.client.getActiveKeys();
-        return keys.current;
-    })
-    const expectedKeys = ['web.ju44cc698.znq3q7z08','web.ju44cc698','web.ju44cc698.3khie0czk'];
-
-    expectedKeys.forEach(element => {
-        I.assertContain(activeKeys, element);
+    const locator = await getCssLocator(cssAsset);
+    const css = await getCssAttribute(cssAsset);
+   
+    //Assert
+    await locator.forEach(async element => {
+        I.waitForElement(element);
+        let cssAttr = await I.grabCssPropertyFrom(element, css[locator.indexOf(element)].attr);
+        I.assertContain(cssAttr, convert.keyword.rgb(css[locator.indexOf(element)].value).join(', ').toString());
     });
 });
-
-Scenario('Verification of JS execution', async ({I})=>{
-    I.amOnPage('/');
-    const browserLogs = await I.grabBrowserLogs();
-    let consoleMessages = [];
-    browserLogs.forEach(element=>{
-        if(element._type === 'log'){
-            consoleMessages.push(element._text);
-    }});
-    consoleMessages.forEach(element => {
-        I.assertContain(element, 'hello');
-    });
-})
