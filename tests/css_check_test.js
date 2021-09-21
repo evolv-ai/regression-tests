@@ -3,24 +3,17 @@ const convert = require('color-convert');
 const config = require('config');
 
 Feature('css_check');
-//arrange
+//Arrange
 const getAllocations = async () => {
     const uid = config.get('UID');
     const response = await needle('get', `${config.get('PARTICIPANT_URL')}v1/${config.get('ENVIRONMENT_ID')}/${uid}/allocations`).then((res)=>{
-        if (res.statusCode == 200){
-            res.body.forEach(element => {
-                for (const property in element.genome.web) {
-                    console.log(`${property}: ${element.genome.web[property]}`);
-                  }
-                
-            });
+        if (res.statusCode == 200) {       
            return res;
-        }else {
+        } else {
             throw new Error('Something is wrong: '+res);
         }
             
     })
-    
     return response;
 }
 
@@ -74,15 +67,16 @@ const getCssAttribute = async (string) => {
     return result;
 }
 
-Scenario('check for css values', async ({ I }) => {
+Scenario('Verify changes when both experiments matching', async ({ I }) => {
     let cssAsset = null;
-    //act
-    I.amOnPage('/clone.html');
+    //Act
+    I.amOnPage('/index.html');
+    
     const scripts = await I.grabAttributeFromAll(locate('//head').find('script'),'src');
     await scripts.forEach(element => {
         if(element)
         if(element.includes('evolv')){
-            allocations = getAllocations(element);
+            allocations = getAllocations();
         }
     });
     
@@ -102,7 +96,7 @@ Scenario('check for css values', async ({ I }) => {
     const locator = await getCssLocator(cssAsset);
     const css = await getCssAttribute(cssAsset);
    
-    //assert
+    //Assert
     await locator.forEach(async element => {
         I.waitForElement(element);
         let cssAttr = await I.grabCssPropertyFrom(element, css[locator.indexOf(element)].attr);

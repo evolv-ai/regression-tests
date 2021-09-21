@@ -7,7 +7,7 @@
     "test": "tests"
   },
   "scripts": {
-    "test": "concurrently --kill-others \"node bs-config.js\" \"npx codeceptjs run\"",
+    "test": "node run-tests.js",
     "actions": "node run-tests.js",
     "start:browser-sync:prod": "NODE_ENV=prod node bs-config.js",
     "start:browser-sync:dev": "NODE_ENV=dev node bs-config.js",

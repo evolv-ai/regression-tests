@@ -1,9 +1,9 @@
 Feature('verify_js');
 
 Scenario('Verification of JS execution', async ({I})=>{
-    //arrange
+    //Arrange
     let consoleMessages = [];
-    //act
+    //Act
     I.amOnPage('/clone.html');
     const browserLogs = await I.grabBrowserLogs();
     browserLogs.forEach(element=>{
@@ -11,8 +11,8 @@ Scenario('Verification of JS execution', async ({I})=>{
             consoleMessages.push(element._text);
     }});
     const evolvMessages = consoleMessages.filter(m => !m.includes("hello"))
-    //assert
+    //Assert
     evolvMessages.forEach(element => {
-        I.assertContain(element, 'learn is red');
+        I.assertContain(element, 'is green');
     });
 })

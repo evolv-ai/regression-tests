@@ -3,24 +3,17 @@ const convert = require('color-convert');
 const config = require('config');
 
 Feature('multiproject');
-//arrange
+//Arrange
 const getAllocations = async () => {
     const uid = config.get('UID');
     const response = await needle('get', `${config.get('PARTICIPANT_URL')}v1/${config.get('ENVIRONMENT_ID')}/${uid}/allocations`).then((res)=>{
-        if (res.statusCode == 200){
-            res.body.forEach(element => {
-                for (const property in element.genome.web) {
-                    console.log(`${property}: ${element.genome.web[property]}`);
-                  }
-                
-            });
+        if (res.statusCode == 200) {       
            return res;
-        }else {
+        } else {
             throw new Error('Something is wrong: '+res);
         }
             
     })
-    
     return response;
 }
 
@@ -73,17 +66,19 @@ const getCssAttribute = async (string) => {
     console.log(result);
     return result;
 }
+const learnMoreCID = '3fb3a217cd28:c6fdd16b87';
+const checkoutCID = '6b02a62df319:47a781df83';
 
 Scenario('Verify changes when both experiments matching', async ({ I }) => {
     let cssAsset = null;
-    //act
-    I.amOnPage('/clone.html');
-    pause();
+    //Act
+    I.amOnPage('/index.html');
+    
     const scripts = await I.grabAttributeFromAll(locate('//head').find('script'),'src');
     await scripts.forEach(element => {
         if(element)
         if(element.includes('evolv')){
-            allocations = getAllocations(element);
+            allocations = getAllocations();
         }
     });
     
@@ -103,23 +98,34 @@ Scenario('Verify changes when both experiments matching', async ({ I }) => {
     const locator = await getCssLocator(cssAsset);
     const css = await getCssAttribute(cssAsset);
    
-    //assert
+    let confirmations = await I.executeScript(async () => {
+        let confirmationsArray = [];
+        evolv.context.remoteContext.confirmations.forEach(element => {
+            confirmationsArray.push(element.cid);
+        })
+        return confirmationsArray;
+    });
+    //Assert
     await locator.forEach(async element => {
         I.waitForElement(element);
         let cssAttr = await I.grabCssPropertyFrom(element, css[locator.indexOf(element)].attr);
         I.assertContain(cssAttr, convert.keyword.rgb(css[locator.indexOf(element)].value).join(', ').toString());
     });
+    
+    await I.assertContain(confirmations, learnMoreCID);
+    await I.assertContain(confirmations, checkoutCID);
+    
 });
 
 Scenario('Verify changes when first experiment matching', async ({ I }) => {
     let cssAsset = null;
-    //act
-    I.amOnPage('/');
+    //Act
+    I.amOnPage('/clone.html');
     const scripts = await I.grabAttributeFromAll(locate('//head').find('script'),'src');
     await scripts.forEach(element => {
         if(element)
         if(element.includes('evolv')){
-            allocations = getAllocations(element);
+            allocations = getAllocations();
         }
     });
     
@@ -138,23 +144,33 @@ Scenario('Verify changes when first experiment matching', async ({ I }) => {
 
     const locator = await getCssLocator(cssAsset);
     const css = await getCssAttribute(cssAsset);
-   
-    //assert
-   
-    I.waitForElement(locator[1]);
-    let cssAttr = await I.grabCssPropertyFrom(locator[1], css[1].attr);
-    I.assertContain(cssAttr, convert.keyword.rgb(css[1].value).join(', ').toString());
+    let confirmations = await I.executeScript(async () => {
+        let confirmationsArray = [];
+        evolv.context.remoteContext.confirmations.forEach(element => {
+            confirmationsArray.push(element.cid);
+        })
+        return confirmationsArray;
+    });
+    //Assert
+    
+    I.waitForElement(locator[0]);
+    let cssAttr = await I.grabCssPropertyFrom(locator[0], css[0].attr);
+    I.assertContain(cssAttr, convert.keyword.rgb(css[0].value).join(', ').toString());
+
+    await I.assertNotContain(confirmations, learnMoreCID);
+    await I.assertContain(confirmations, checkoutCID);
+
 });
 
 Scenario('Verify changes when second experiment matching', async ({ I }) => {
     let cssAsset = null;
-    //act
+    //Act
     I.amOnPage('/clone1.html');
     const scripts = await I.grabAttributeFromAll(locate('//head').find('script'),'src');
     await scripts.forEach(element => {
         if(element)
         if(element.includes('evolv')){
-            allocations = getAllocations(element);
+            allocations = getAllocations();
         }
     });
     
@@ -173,23 +189,33 @@ Scenario('Verify changes when second experiment matching', async ({ I }) => {
 
     const locator = await getCssLocator(cssAsset);
     const css = await getCssAttribute(cssAsset);
-   
-    //assert
+    
+    let confirmations = await I.executeScript(async () => {
+        let confirmationsArray = [];
+        evolv.context.remoteContext.confirmations.forEach(element => {
+            confirmationsArray.push(element.cid);
+        })
+        return confirmationsArray;
+    });
+    //Assert
    
     I.waitForElement(locator[1]);
-    let cssAttr = await I.grabCssPropertyFrom(locator[0], css[0].attr);
-    I.assertContain(cssAttr, convert.keyword.rgb(css[0].value).join(', ').toString());
+    let cssAttr = await I.grabCssPropertyFrom(locator[1], css[1].attr);
+    I.assertContain(cssAttr, convert.keyword.rgb(css[1].value).join(', ').toString());
+
+    await I.assertContain(confirmations, learnMoreCID);
+    await I.assertNotContain(confirmations, checkoutCID);
 });
 
 Scenario('Verify changes when none of experiment matching', async ({ I }) => {
     let cssAsset = null;
-    //act
+    //Act
     I.amOnPage('/');
     const scripts = await I.grabAttributeFromAll(locate('//head').find('script'),'src');
     await scripts.forEach(element => {
         if(element)
         if(element.includes('evolv')){
-            allocations = getAllocations(element);
+            allocations = getAllocations();
         }
     });
     
@@ -208,12 +234,25 @@ Scenario('Verify changes when none of experiment matching', async ({ I }) => {
 
     const locator = await getCssLocator(cssAsset);
     const css = await getCssAttribute(cssAsset);
+    let confirmations = await I.executeScript(async () => {
+        let confirmationsArray = [];
+        if(evolv.context.remoteContext.confirmations){
+            evolv.context.remoteContext.confirmations.forEach(element => {
+                confirmationsArray.push(element.cid);
+            })
+        }else confirmationsArray = [];
+        return confirmationsArray;
+    });
+    //Assert
    
-    //assert
-   
-    I.waitForElement(locator[1]);
-    let cssAttr = await I.grabCssPropertyFrom(locator[1], css[1].attr);
-    I.assertContain(cssAttr, convert.keyword.rgb(css[1].value).join(', ').toString());
+    await locator.forEach(async element => {
+        I.waitForElement(element);
+        let cssAttr = await I.grabCssPropertyFrom(element, css[locator.indexOf(element)].attr);
+        I.assertNotContain(cssAttr, convert.keyword.rgb(css[locator.indexOf(element)].value).join(', ').toString());
+    });
+
+    await I.assertNotContain(confirmations, learnMoreCID);
+    await I.assertNotContain(confirmations, checkoutCID);
 });
 
 

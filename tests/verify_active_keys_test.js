@@ -1,15 +1,15 @@
 Feature('verify_active_keys');
 
 Scenario('Verification of active keys', async ({I})=>{
-    //arrange
-    const expectedKeys = ['web.ju44cc698.znq3q7z08','web.ju44cc698','web.ju44cc698.3khie0czk'];
-    //act
-    I.amOnPage('/clone.html');
+    //Arrange
+    const expectedKeys = ["web.ziki67zuk.r41ruj170","web.ziki67zuk","web.jol5muwhq.bv1pfu3vu","web.jol5muwhq"];
+    //Act
+    I.amOnPage('/index.html');
     let activeKeys = await I.executeScript(async () => {
         let keys = await evolv.client.getActiveKeys();
         return keys.current;
     })
-    //assert
+    //Assert
     expectedKeys.forEach(element => {
         I.assertContain(activeKeys, element);
     });
