@@ -1,73 +1,9 @@
-const needle = require('needle');
 const convert = require('color-convert');
-const config = require('config');
-
+const utils = require('../utils/utils');
 Feature('css_check');
 //Arrange
-const getAllocations = async () => {
-    const uid = config.get('UID');
-    const response = await needle('get', `${config.get('PARTICIPANT_URL')}v1/${config.get('ENVIRONMENT_ID')}/${uid}/allocations`).then((res)=>{
-        if (res.statusCode == 200) {       
-           return res;
-        } else {
-            throw new Error('Something is wrong: '+res);
-        }
-            
-    })
-    return response;
-}
 
-const getCssLocator = async (string) => {
-    const response = await needle('get', string).then((res)=>{
-        if (res.statusCode == 200){
-           return res.body;
-        }else {
-            throw new Error('Something is wrong: '+res);
-        }
-            
-    });
-    let locatorValues = response.split("\n");
-    
-    try {
-        locatorValues.forEach(element => {
-            element = element.split('{')[0].trim().split(' ')[1];
-        });
-    } catch (error) {
-        throw new Error(error);
-    } 
-    const filteredValues = locatorValues.filter(value => value.length > 2);
-    const result = filteredValues.map(value => value.split(' ')[1].split('{')[0]);
-    return result;
-}
-
-const getCssAttribute = async (string) => {
-    const response = await needle('get', string).then((res)=>{
-        if (res.statusCode == 200){
-           return res.body;
-        }else {
-            throw new Error('Something is wrong: '+res);
-        }
-            
-    });
-    let locatorValues = response.split("\n");
-    try {
-        locatorValues.forEach(element => {
-            element = element.split('{')[0].trim().split(' ')[1];
-        });
-    } catch (error) {
-        throw new Error(error);
-    } 
-    const filteredValues = locatorValues.filter(value => value.length > 2);
-    const result = filteredValues.map(value => {
-        let cssObj = {attr:value.split(' ')[1].split('{')[1].split(":")[0],
-        value: value.split(' ')[1].split('{')[1].split(":")[1].slice(0, -1)};
-        return cssObj;
-    });
-    console.log(result);
-    return result;
-}
-
-Scenario('Verify changes when both experiments matching', async ({ I }) => {
+Scenario('Verify css is applied to DOM elements', async ({ I }) => {
     let cssAsset = null;
     //Act
     I.amOnPage('/index.html');
@@ -76,7 +12,7 @@ Scenario('Verify changes when both experiments matching', async ({ I }) => {
     await scripts.forEach(element => {
         if(element)
         if(element.includes('evolv')){
-            allocations = getAllocations();
+            allocations = utils.getAllocations();
         }
     });
     
@@ -93,8 +29,8 @@ Scenario('Verify changes when both experiments matching', async ({ I }) => {
         throw new Error('links does not contain evolv assets');  
     }
 
-    const locator = await getCssLocator(cssAsset);
-    const css = await getCssAttribute(cssAsset);
+    const locator = await utils.getCssLocator(cssAsset);
+    const css = await utils.getCssAttribute(cssAsset);
    
     //Assert
     await locator.forEach(async element => {
