@@ -1,73 +1,11 @@
-const needle = require('needle');
 const convert = require('color-convert');
-const config = require('config');
+const utils = require('../utils/utils');
 
 Feature('multiproject');
 //Arrange
-const getAllocations = async () => {
-    const uid = config.get('UID');
-    const response = await needle('get', `${config.get('PARTICIPANT_URL')}v1/${config.get('ENVIRONMENT_ID')}/${uid}/allocations`).then((res)=>{
-        if (res.statusCode == 200) {       
-           return res;
-        } else {
-            throw new Error('Something is wrong: '+res);
-        }
-            
-    })
-    return response;
-}
 
-const getCssLocator = async (string) => {
-    const response = await needle('get', string).then((res)=>{
-        if (res.statusCode == 200){
-           return res.body;
-        }else {
-            throw new Error('Something is wrong: '+res);
-        }
-            
-    });
-    let locatorValues = response.split("\n");
-    
-    try {
-        locatorValues.forEach(element => {
-            element = element.split('{')[0].trim().split(' ')[1];
-        });
-    } catch (error) {
-        throw new Error(error);
-    } 
-    const filteredValues = locatorValues.filter(value => value.length > 2);
-    const result = filteredValues.map(value => value.split(' ')[1].split('{')[0]);
-    return result;
-}
-
-const getCssAttribute = async (string) => {
-    const response = await needle('get', string).then((res)=>{
-        if (res.statusCode == 200){
-           return res.body;
-        }else {
-            throw new Error('Something is wrong: '+res);
-        }
-            
-    });
-    let locatorValues = response.split("\n");
-    try {
-        locatorValues.forEach(element => {
-            element = element.split('{')[0].trim().split(' ')[1];
-        });
-    } catch (error) {
-        throw new Error(error);
-    } 
-    const filteredValues = locatorValues.filter(value => value.length > 2);
-    const result = filteredValues.map(value => {
-        let cssObj = {attr:value.split(' ')[1].split('{')[1].split(":")[0],
-        value: value.split(' ')[1].split('{')[1].split(":")[1].slice(0, -1)};
-        return cssObj;
-    });
-    console.log(result);
-    return result;
-}
-const learnMoreCID = '3fb3a217cd28:c6fdd16b87';
-const checkoutCID = '6b02a62df319:47a781df83';
+const learnMoreCID = '3fb3a217cd28:3a7c12f7a5';
+const checkoutCID = '6b02a62df319:ac6d3e5bf2';
 
 Scenario('Verify changes when both experiments matching', async ({ I }) => {
     let cssAsset = null;
@@ -78,7 +16,7 @@ Scenario('Verify changes when both experiments matching', async ({ I }) => {
     await scripts.forEach(element => {
         if(element)
         if(element.includes('evolv')){
-            allocations = getAllocations();
+            allocations = utils.getAllocations();
         }
     });
     
@@ -95,9 +33,9 @@ Scenario('Verify changes when both experiments matching', async ({ I }) => {
         throw new Error('links does not contain evolv assets');  
     }
 
-    const locator = await getCssLocator(cssAsset);
-    const css = await getCssAttribute(cssAsset);
-   
+    const locator = await utils.getCssLocator(cssAsset);
+    const css = await utils.getCssAttribute(cssAsset);
+    I.wait(1);
     let confirmations = await I.executeScript(async () => {
         let confirmationsArray = [];
         evolv.context.remoteContext.confirmations.forEach(element => {
@@ -106,6 +44,7 @@ Scenario('Verify changes when both experiments matching', async ({ I }) => {
         return confirmationsArray;
     });
     //Assert
+    
     await locator.forEach(async element => {
         I.waitForElement(element);
         let cssAttr = await I.grabCssPropertyFrom(element, css[locator.indexOf(element)].attr);
@@ -125,7 +64,7 @@ Scenario('Verify changes when first experiment matching', async ({ I }) => {
     await scripts.forEach(element => {
         if(element)
         if(element.includes('evolv')){
-            allocations = getAllocations();
+            allocations = utils.getAllocations();
         }
     });
     
@@ -142,8 +81,9 @@ Scenario('Verify changes when first experiment matching', async ({ I }) => {
         throw new Error('links does not contain evolv assets');  
     }
 
-    const locator = await getCssLocator(cssAsset);
-    const css = await getCssAttribute(cssAsset);
+    const locator = await utils.getCssLocator(cssAsset);
+    const css = await utils.getCssAttribute(cssAsset);
+    I.wait(1);
     let confirmations = await I.executeScript(async () => {
         let confirmationsArray = [];
         evolv.context.remoteContext.confirmations.forEach(element => {
@@ -151,11 +91,14 @@ Scenario('Verify changes when first experiment matching', async ({ I }) => {
         })
         return confirmationsArray;
     });
-    //Assert
     
+    //Assert
     I.waitForElement(locator[0]);
     let cssAttr = await I.grabCssPropertyFrom(locator[0], css[0].attr);
     I.assertContain(cssAttr, convert.keyword.rgb(css[0].value).join(', ').toString());
+    I.waitForElement(locator[1]);
+    cssAttr = await I.grabCssPropertyFrom(locator[1], css[1].attr);
+    I.assertNotContain(cssAttr, convert.keyword.rgb(css[1].value).join(', ').toString());
 
     await I.assertNotContain(confirmations, learnMoreCID);
     await I.assertContain(confirmations, checkoutCID);
@@ -170,7 +113,7 @@ Scenario('Verify changes when second experiment matching', async ({ I }) => {
     await scripts.forEach(element => {
         if(element)
         if(element.includes('evolv')){
-            allocations = getAllocations();
+            allocations = utils.getAllocations();
         }
     });
     
@@ -187,9 +130,9 @@ Scenario('Verify changes when second experiment matching', async ({ I }) => {
         throw new Error('links does not contain evolv assets');  
     }
 
-    const locator = await getCssLocator(cssAsset);
-    const css = await getCssAttribute(cssAsset);
-    
+    const locator = await utils.getCssLocator(cssAsset);
+    const css = await utils.getCssAttribute(cssAsset);
+    I.wait(1);
     let confirmations = await I.executeScript(async () => {
         let confirmationsArray = [];
         evolv.context.remoteContext.confirmations.forEach(element => {
@@ -202,7 +145,9 @@ Scenario('Verify changes when second experiment matching', async ({ I }) => {
     I.waitForElement(locator[1]);
     let cssAttr = await I.grabCssPropertyFrom(locator[1], css[1].attr);
     I.assertContain(cssAttr, convert.keyword.rgb(css[1].value).join(', ').toString());
-
+    I.waitForElement(locator[0]);
+    cssAttr = await I.grabCssPropertyFrom(locator[0], css[0].attr);
+    I.assertNotContain(cssAttr, convert.keyword.rgb(css[0].value).join(', ').toString());
     await I.assertContain(confirmations, learnMoreCID);
     await I.assertNotContain(confirmations, checkoutCID);
 });
@@ -215,7 +160,7 @@ Scenario('Verify changes when none of experiment matching', async ({ I }) => {
     await scripts.forEach(element => {
         if(element)
         if(element.includes('evolv')){
-            allocations = getAllocations();
+            allocations = utils.getAllocations();
         }
     });
     
@@ -232,8 +177,9 @@ Scenario('Verify changes when none of experiment matching', async ({ I }) => {
         throw new Error('links does not contain evolv assets');  
     }
 
-    const locator = await getCssLocator(cssAsset);
-    const css = await getCssAttribute(cssAsset);
+    const locator = await utils.getCssLocator(cssAsset);
+    const css = await utils.getCssAttribute(cssAsset);
+    I.wait(1);
     let confirmations = await I.executeScript(async () => {
         let confirmationsArray = [];
         if(evolv.context.remoteContext.confirmations){
