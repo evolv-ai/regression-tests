@@ -60,5 +60,17 @@ module.exports = {
             return cssObj;
         });
         return result;
+    },
+    getConfiguration: async function(){
+        const uid = config.get('UID');
+        const response = await needle('get', `${config.get('PARTICIPANT_URL')}v1/${config.get('ENVIRONMENT_ID')}/${uid}/configuration.json`).then((res)=>{
+            if (res.statusCode == 200) {       
+               return res;
+            } else {
+                throw new Error('Something is wrong: '+res);
+            }
+                
+        })
+        return response.body._experiments;
     }    
  }
