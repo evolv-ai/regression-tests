@@ -5,7 +5,7 @@ exports.config = {
   helpers: {
     Puppeteer: {
       url: config.get('HOST_URL'),
-      show: true,
+      show: false,
       windowSize: '1200x900'
     },
     "ChaiWrapper" : {
