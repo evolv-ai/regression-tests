@@ -1,7 +1,7 @@
 const utils = require('../utils/utils');
 
 Feature('entry_page');
-Scenario('Verify changes when both experiments matching', async ({ I }) => {
+Scenario('Verify confirmations when both experiments matching', async ({ I }) => {
     //Act
     I.amOnPage('/index.html');
     I.wait(2);
@@ -40,7 +40,7 @@ Scenario('Verify changes when both experiments matching', async ({ I }) => {
     });
 });
 
-Scenario('Verify changes when first experiment matching', async ({ I }) => {
+Scenario('Verify no confirmations when first experiment (non entry page) matching', async ({ I }) => {
    //Act
    I.amOnPage('/clone.html');
    I.wait(2);
@@ -73,7 +73,7 @@ Scenario('Verify changes when first experiment matching', async ({ I }) => {
    });
 });
 
-Scenario('Verify changes when second experiment matching', async ({ I }) => {
+Scenario('Verify confirmations when second experiment (entry page) matching', async ({ I }) => {
     //Act
     I.amOnPage('/clone1.html');
     I.wait(2);
@@ -112,7 +112,7 @@ Scenario('Verify changes when second experiment matching', async ({ I }) => {
     });
 });
 
-Scenario('Verify changes when none of experiment matching', async ({ I }) => {
+Scenario('Verify no confirmations when none of experiment matching', async ({ I }) => {
     //Act
     I.amOnPage('/');
     I.wait(2);
