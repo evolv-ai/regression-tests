@@ -2,9 +2,8 @@ const config = require('config');
 const needle = require('needle');
 
 module.exports = {
-    getAllocations: async function()  {
-        const uid = config.get('UID');
-        const response = await needle('get', `${config.get('PARTICIPANT_URL')}v1/${config.get('ENVIRONMENT_ID')}/${uid}/allocations`).then((res)=>{
+    getAllocations: async function(ENVIRONMENT_ID, uid=config.get('UID'))  {
+        const response = await needle('get', `${config.get('PARTICIPANT_URL')}v1/${ENVIRONMENT_ID}/${uid}/allocations`).then((res)=>{
             if (res.statusCode == 200) {       
                return res;
             } else {
@@ -60,5 +59,28 @@ module.exports = {
             return cssObj;
         });
         return result;
+    },
+    getConfiguration: async function(){
+        const uid = config.get('UID');
+        const response = await needle('get', `${config.get('PARTICIPANT_URL')}v1/${config.get('ENVIRONMENT_ID')}/${uid}/configuration.json`).then((res)=>{
+            if (res.statusCode == 200) {       
+               return res;
+            } else {
+                throw new Error('Something is wrong: '+res);
+            }
+                
+        })
+        return response.body._experiments;
+    },
+    getEntryPoints: async function(activeKeys, experimentsConfig){
+        let entryPoints = [];
+        activeKeys.forEach(element => {
+            for (let index = 0; index < experimentsConfig.length; index++) {
+                if(experimentsConfig[index].web[element]){
+                    entryPoints.push({id:experimentsConfig[index].id, isEntryPoint: experimentsConfig[index].web[element]._is_entry_point});
+                }  
+            }
+        });
+        return entryPoints;
     }    
- }
+ };

@@ -8,11 +8,11 @@ const server = browserSync.create();
 
 fs.writeFile('static/js/loader.js', `var script = document.createElement('script');
 
-script.src = "${config.get('WEBLOADER_URL')}";
-script.setAttribute('data-evolv-environment', "${config.get('ENVIRONMENT_ID')}");
-script.setAttribute('data-evolv-endpoint', "${config.get('PARTICIPANT_URL')}");
-script.setAttribute('data-evolv-uid', "${config.get('UID')}");
-document.getElementsByTagName('head')[0].appendChild(script);`, {flag:'w'}, function (err) {
+	script.src = "${config.get('WEBLOADER_URL')}";
+	script.setAttribute('data-evolv-environment', "${config.get('ENVIRONMENT_ID')}");
+	script.setAttribute('data-evolv-endpoint', "${config.get('PARTICIPANT_URL')}");
+	script.setAttribute('data-evolv-uid', "${config.get('UID')}");
+	document.getElementsByTagName('head')[0].appendChild(script);`, {flag:'w'}, function (err) {
 	if (err) throw err;
 	console.log('File is created successfully.');
 });

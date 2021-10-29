@@ -1,5 +1,6 @@
 const convert = require('color-convert');
 const utils = require('../utils/utils');
+const config = require('config');
 Feature('css_check');
 //Arrange
 
@@ -12,7 +13,7 @@ Scenario('Verify css is applied to DOM elements', async ({ I }) => {
     await scripts.forEach(element => {
         if(element)
         if(element.includes('evolv')){
-            allocations = utils.getAllocations();
+            allocations = utils.getAllocations(config.get('ENVIRONMENT_ID'));
         }
     });
     

@@ -4,19 +4,19 @@ const utils = require('../utils/utils');
 Feature('multiproject');
 //Arrange
 
-const learnMoreCID = '3fb3a217cd28:3a7c12f7a5';
-const checkoutCID = '6b02a62df319:ac6d3e5bf2';
+const learnMoreCID = '3fb3a217cd28:66b598a4bd';
+const checkoutCID = '6b02a62df319:4c1e0fedd0';
 
 Scenario('Verify changes when both experiments matching', async ({ I }) => {
     let cssAsset = null;
     //Act
-    I.amOnPage('/index.html');
-    
+    I.amOnPage('/multiProjectBoth.html');
     const scripts = await I.grabAttributeFromAll(locate('//head').find('script'),'src');
     await scripts.forEach(element => {
         if(element)
         if(element.includes('evolv')){
-            allocations = utils.getAllocations();
+            //config.get('ENVIRONMENT_ID')
+            allocations = utils.getAllocations("f7796c595a","66428915_1635165183658");
         }
     });
     
@@ -44,7 +44,6 @@ Scenario('Verify changes when both experiments matching', async ({ I }) => {
         return confirmationsArray;
     });
     //Assert
-    
     await locator.forEach(async element => {
         I.waitForElement(element);
         let cssAttr = await I.grabCssPropertyFrom(element, css[locator.indexOf(element)].attr);
@@ -59,12 +58,12 @@ Scenario('Verify changes when both experiments matching', async ({ I }) => {
 Scenario('Verify changes when first experiment matching', async ({ I }) => {
     let cssAsset = null;
     //Act
-    I.amOnPage('/clone.html');
+    I.amOnPage('/multiprojectSecond.html');
     const scripts = await I.grabAttributeFromAll(locate('//head').find('script'),'src');
     await scripts.forEach(element => {
         if(element)
         if(element.includes('evolv')){
-            allocations = utils.getAllocations();
+            allocations = utils.getAllocations("f7796c595a","66428915_1635165183658");
         }
     });
     
@@ -100,20 +99,20 @@ Scenario('Verify changes when first experiment matching', async ({ I }) => {
     cssAttr = await I.grabCssPropertyFrom(locator[1], css[1].attr);
     I.assertNotContain(cssAttr, convert.keyword.rgb(css[1].value).join(', ').toString());
 
-    await I.assertNotContain(confirmations, learnMoreCID);
-    await I.assertContain(confirmations, checkoutCID);
+    await I.assertContain(confirmations, learnMoreCID);
+    await I.assertNotContain(confirmations, checkoutCID);
 
 });
 
 Scenario('Verify changes when second experiment matching', async ({ I }) => {
     let cssAsset = null;
     //Act
-    I.amOnPage('/clone1.html');
+    I.amOnPage('/multiProjectFirst.html');
     const scripts = await I.grabAttributeFromAll(locate('//head').find('script'),'src');
     await scripts.forEach(element => {
         if(element)
         if(element.includes('evolv')){
-            allocations = utils.getAllocations();
+            allocations = utils.getAllocations("f7796c595a","66428915_1635165183658");
         }
     });
     
@@ -148,19 +147,19 @@ Scenario('Verify changes when second experiment matching', async ({ I }) => {
     I.waitForElement(locator[0]);
     cssAttr = await I.grabCssPropertyFrom(locator[0], css[0].attr);
     I.assertNotContain(cssAttr, convert.keyword.rgb(css[0].value).join(', ').toString());
-    await I.assertContain(confirmations, learnMoreCID);
-    await I.assertNotContain(confirmations, checkoutCID);
+    await I.assertNotContain(confirmations, learnMoreCID);
+    await I.assertContain(confirmations, checkoutCID);
 });
 
 Scenario('Verify changes when none of experiment matching', async ({ I }) => {
     let cssAsset = null;
     //Act
-    I.amOnPage('/');
+    I.amOnPage('/multiprojectNone.html');
     const scripts = await I.grabAttributeFromAll(locate('//head').find('script'),'src');
     await scripts.forEach(element => {
         if(element)
         if(element.includes('evolv')){
-            allocations = utils.getAllocations();
+            allocations = utils.getAllocations("f7796c595a","66428915_1635165183658");
         }
     });
     
