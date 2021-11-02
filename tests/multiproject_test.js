@@ -6,7 +6,8 @@ Feature('multiproject');
 
 const learnMoreCID = '3fb3a217cd28:66b598a4bd';
 const checkoutCID = '6b02a62df319:4c1e0fedd0';
-
+const env_id = "f7796c595a";
+const uid = "66428915_1635165183658";
 Scenario('Verify changes when both experiments matching', async ({ I }) => {
     let cssAsset = null;
     //Act
@@ -15,8 +16,7 @@ Scenario('Verify changes when both experiments matching', async ({ I }) => {
     await scripts.forEach(element => {
         if(element)
         if(element.includes('evolv')){
-            //config.get('ENVIRONMENT_ID')
-            allocations = utils.getAllocations("f7796c595a","66428915_1635165183658");
+            allocations = utils.getAllocations(env_id,uid);
         }
     });
     
@@ -63,7 +63,7 @@ Scenario('Verify changes when first experiment matching', async ({ I }) => {
     await scripts.forEach(element => {
         if(element)
         if(element.includes('evolv')){
-            allocations = utils.getAllocations("f7796c595a","66428915_1635165183658");
+            allocations = utils.getAllocations(env_id,uid);
         }
     });
     
@@ -112,7 +112,7 @@ Scenario('Verify changes when second experiment matching', async ({ I }) => {
     await scripts.forEach(element => {
         if(element)
         if(element.includes('evolv')){
-            allocations = utils.getAllocations("f7796c595a","66428915_1635165183658");
+            allocations = utils.getAllocations(env_id,uid);
         }
     });
     
@@ -159,7 +159,7 @@ Scenario('Verify changes when none of experiment matching', async ({ I }) => {
     await scripts.forEach(element => {
         if(element)
         if(element.includes('evolv')){
-            allocations = utils.getAllocations("f7796c595a","66428915_1635165183658");
+            allocations = utils.getAllocations(env_id,uid);
         }
     });
     
