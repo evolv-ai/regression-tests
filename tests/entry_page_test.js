@@ -50,7 +50,7 @@ async function arrangeTest(I, page) {
     return experimentDetails;
 }
 
-Scenario('Verify confirmation when both experiments match the context and the first has entry point equal to true', async ({ I }) => {
+Scenario('Verify confirmation when one experiment has entry point equal to true and the other set to false', async ({ I }) => {
     // ACT & ARRANGE
     const page = '/index.html';
     const exp = await arrangeTest(I, page);
@@ -72,12 +72,13 @@ Scenario('Verify confirmation when both experiments match the context and the fi
     })
 });
 
-Scenario('Verify no confirmations when EXPERIMENT 1 entry page is false', async ({ I }) => {
+Scenario('Verify no confirmation when entry page is false', async ({ I }) => {
     // ACT & ARRANGE
     const page = '/clone.html';
     const exp = await arrangeTest(I, page);
 
     // ASSERT
+    I.assertTrue(exp.countOfActiveKeys === 1);
     // I expect the entry point for the active key to be false
     exp.allActiveKeysEntryPointInfo.forEach(key => {
         I.assertTrue(key.isEntryPoint === false);
@@ -87,38 +88,27 @@ Scenario('Verify no confirmations when EXPERIMENT 1 entry page is false', async 
 
 });
 
-Scenario('Verify confirmation when EXPERIMENT 2 entry page is true', async ({ I }) => {
+Scenario('Verify confirmation when entry page is true', async ({ I }) => {
     // ACT & ARRANGE
     const page = '/clone1.html';
     const exp = await arrangeTest(I, page);
 
     // ASSERT
     // I expect the entry point for the active key to be true
+    I.assertTrue(exp.countOfActiveKeys === 1);
     exp.allActiveKeysEntryPointInfo.forEach(key => {
         I.assertTrue(key.isEntryPoint === true);
     })
-    // I expect there to be one confirmation
     I.assertTrue(exp.countOfConfirmations === 1);
 });
 
 Scenario('Verify no confirmations when none of the experiments match', async ({ I }) => {
-    /*
-    There are no experiments running on page '/'.
-    This test should be checking for active experiments that don't match the current context. Otherwise, we're not testing anything.
-     */
     // ACT & ARRANGE
-    const page = '/';
+    const page = '/nocontextmatch.html';
     const exp = await arrangeTest(I, page);
 
     // ASSERT
-    // I expect there to be no confirmations
-    I.assertEqual(exp.countOfConfirmations, 0);
-    // I expect there to be no entry points equal to true
-    exp.allActiveKeysEntryPointInfo.forEach(key => {
-        I.assertEqual(key.isEntryPoint, false); // This won't execute until there are active experiments
-    });
-    // Another way of checking the above statement, except above is more explicit
+    I.assertTrue(exp.countOfConfirmations === 0);
+    I.assertTrue(exp.countOfActiveKeys === 0);
     I.assertTrue(exp.countOfEntryPoints === 0);
-    // I expect there to be more than one entry point
-    I.assertTrue(exp.countOfEntryPoints > 1); // This will fail until there are active experiments
 });
