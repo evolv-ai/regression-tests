@@ -1,7 +1,7 @@
 {
     "HOST_URL": "http://localhost:9090",
     "SHOW_BROWSER":"true",
-    "WEBLOADER_URL":"https://media.evolv.ai/asset-manager/releases/next/webloader.js",
+    "WEBLOADER_URL":"https://media.evolv.ai/asset-manager/releases/dev/webloader.js",
     "PARTICIPANT_URL":"https://participants-newdev.evolvdev.com/",
     "ENVIRONMENT_ID":"cecc5e6e80",
     "UID":"45389200_1626264858193"
