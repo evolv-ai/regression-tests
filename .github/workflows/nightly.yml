@@ -26,7 +26,7 @@ jobs:
       - name: Run e2e Tests
         run: |
           npm install
-          npm run test:dev
+          npm run test
         env:
           HOST_URL: "http://localhost:9090/"
       - name: Slack Notification (failure)

@@ -2,6 +2,45 @@ const utils = require('../utils/utils');
 
 Feature('entry_page');
 
+const logExperimentDetails = (
+    countOfActiveKeys, countOfEntryPoints, allActiveKeysEntryPointInfo, countOfConfirmations, confirmations
+) => {
+    console.log(`Active keys: ${countOfActiveKeys}`);
+    console.log(`Entry points: ${countOfEntryPoints}`);
+    allActiveKeysEntryPointInfo.forEach(key => {
+        console.log(`${key.id} | isEntryPoint: ${key.isEntryPoint}`);
+    })
+    console.log(`Confirmations: ${countOfConfirmations}`);
+    console.log(confirmations);
+}
+
+const validateEntryPoints = (allActiveKeysEntryPointInfo, entryPointValue) => {
+    let isValid;
+    allActiveKeysEntryPointInfo.forEach(key => {
+        if (key.isEntryPoint === entryPointValue) {
+            isValid === false ? isValid = false : isValid = true;
+        } else {
+            isValid = false;
+        }
+    })
+    return isValid;
+}
+
+const checkOnlyEntryPointConfirmations = (confirmations, allActiveKeysEntryPointInfo) => {
+    let validChecks = 0;
+    confirmations.forEach(confirmation => {
+        allActiveKeysEntryPointInfo.find(key => {
+            if (key.isEntryPoint) {
+                confirmation.indexOf(key.id) > -1 ? validChecks += 1 : validChecks -= 1;
+            } else {
+                confirmation.indexOf(key.id) === -1 ? validChecks += 1 : validChecks -= 1;
+            }
+        })
+    })
+
+    return validChecks === allActiveKeysEntryPointInfo.length;
+}
+
 async function arrangeTest(I, page) {
     I.amOnPage(page);
     I.wait(2);
@@ -32,12 +71,9 @@ async function arrangeTest(I, page) {
     const countOfEntryPoints = allActiveKeysEntryPointInfo.filter(key => key.isEntryPoint).length;
     const countOfConfirmations = confirmations.length;
 
-    console.log(`Active keys: ${countOfActiveKeys}`);
-    console.log(`Entry points: ${countOfEntryPoints}`);
-    allActiveKeysEntryPointInfo.forEach(key => {
-        console.log(`${key.id} | isEntryPoint: ${key.isEntryPoint}`);
-    })
-    console.log(`Confirmations: ${countOfConfirmations}`);
+    logExperimentDetails(
+        countOfActiveKeys, countOfEntryPoints, allActiveKeysEntryPointInfo, countOfConfirmations, confirmations
+    );
 
     const experimentDetails = {
         confirmations: confirmations,
@@ -56,20 +92,9 @@ Scenario('Verify confirmation when one experiment has entry point equal to true 
     const exp = await arrangeTest(I, page);
 
     // ASSERT
-    // I expect there to be a confirmation for each experiment where entry point is true
     I.assertTrue(exp.countOfConfirmations === exp.countOfEntryPoints);
-    // I expect there to be one confirmation
     I.assertTrue(exp.countOfConfirmations === 1);
-    // I expect there to be no confirmation where entry point is false
-    exp.confirmations.forEach(confirmation => {
-        exp.allActiveKeysEntryPointInfo.find(key => {
-            if (key.isEntryPoint) {
-                I.assertTrue(confirmation.indexOf(key.id) > -1); // Confirmation
-            } else {
-                I.assertTrue(confirmation.indexOf(key.id) === -1); // No confirmation
-            }
-        })
-    })
+    I.assertTrue(checkOnlyEntryPointConfirmations(exp.confirmations, exp.allActiveKeysEntryPointInfo));
 });
 
 Scenario('Verify no confirmation when entry page is false', async ({ I }) => {
@@ -79,13 +104,8 @@ Scenario('Verify no confirmation when entry page is false', async ({ I }) => {
 
     // ASSERT
     I.assertTrue(exp.countOfActiveKeys === 1);
-    // I expect the entry point for the active key to be false
-    exp.allActiveKeysEntryPointInfo.forEach(key => {
-        I.assertTrue(key.isEntryPoint === false);
-    })
-    // I expect there to be no confirmations
+    I.assertTrue(validateEntryPoints(exp.allActiveKeysEntryPointInfo, false))
     I.assertTrue(exp.countOfConfirmations === 0);
-
 });
 
 Scenario('Verify confirmation when entry page is true', async ({ I }) => {
@@ -94,11 +114,8 @@ Scenario('Verify confirmation when entry page is true', async ({ I }) => {
     const exp = await arrangeTest(I, page);
 
     // ASSERT
-    // I expect the entry point for the active key to be true
     I.assertTrue(exp.countOfActiveKeys === 1);
-    exp.allActiveKeysEntryPointInfo.forEach(key => {
-        I.assertTrue(key.isEntryPoint === true);
-    })
+    I.assertTrue(validateEntryPoints(exp.allActiveKeysEntryPointInfo, true))
     I.assertTrue(exp.countOfConfirmations === 1);
 });
 
