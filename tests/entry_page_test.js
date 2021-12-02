@@ -15,30 +15,30 @@ const logExperimentDetails = (
 }
 
 const validateEntryPoints = (allActiveKeysEntryPointInfo, entryPointValue) => {
-    let isValid;
     allActiveKeysEntryPointInfo.forEach(key => {
-        if (key.isEntryPoint === entryPointValue) {
-            isValid === false ? isValid = false : isValid = true;
-        } else {
-            isValid = false;
+        if (key.isEntryPoint !== entryPointValue) {
+            return false
         }
     })
-    return isValid;
+    return true;
 }
 
 const checkOnlyEntryPointConfirmations = (confirmations, allActiveKeysEntryPointInfo) => {
-    let validChecks = 0;
     confirmations.forEach(confirmation => {
         allActiveKeysEntryPointInfo.find(key => {
             if (key.isEntryPoint) {
-                confirmation.indexOf(key.id) > -1 ? validChecks += 1 : validChecks -= 1;
+                if (confirmation.indexOf(key.id) === -1) {
+                    return false
+                }
             } else {
-                confirmation.indexOf(key.id) === -1 ? validChecks += 1 : validChecks -= 1;
+                if (confirmation.indexOf(key.id) > -1) {
+                    return false
+                }
             }
         })
     })
 
-    return validChecks === allActiveKeysEntryPointInfo.length;
+    return true;
 }
 
 async function arrangeTest(I, page) {
