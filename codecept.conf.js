@@ -10,6 +10,9 @@ exports.config = {
     },
     "ChaiWrapper" : {
       "require": "codeceptjs-chai"
+    },
+    "ExperimentDetails" : {
+      "require": "./helpers/ExperimentDetails_helper.js"
     }
   },
   include: {
