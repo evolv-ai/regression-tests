@@ -17,39 +17,46 @@ class ExperimentDetails extends Helper {
         // remove if not used
     }
 
-     async getActiveKeys() {
-        const { Puppeteer } = this.helpers;
+    async getCurrentActiveKeys() {
+        const {Puppeteer} = this.helpers;
 
-        return await Puppeteer.executeScript( async () => {
-            let keys = await evolv.client.getActiveKeys();
-            let filteredKeys = keys.current.filter(key => key.split('.').length < 3);
-            return filteredKeys.map(key => key.split('.')[1]);
+        return await Puppeteer.executeScript(async () => {
+            const keys = await evolv.client.getActiveKeys();
+            return keys.current;
         })
     }
 
-    updateTheContext(contextChange) {
-        const { Puppeteer } = this.helpers;
+    updateContext(contextItems) {
+        const {Puppeteer} = this.helpers;
 
-        Puppeteer.executeScript( contextChange => {
-            evolv.context.update({newContextItem: contextChange.join(' ')});
-        }, contextChange)
+        Puppeteer.executeScript(contextItems => {
+            evolv.context.update(contextItems);
+        }, contextItems)
+
     }
 
     async getContextItems() {
-        const { Puppeteer } = this.helpers;
+        const {Puppeteer} = this.helpers;
 
-        return await Puppeteer.executeScript( async () => {
-            let context = await evolv.context.remoteContext;
-            let items = [];
-            for (let key in context) {
-                if (context.hasOwnProperty(key)) {
-                    items.push({
-                        key: key,
-                        value: context[key]
-                    });
-                }
+        return await Puppeteer.executeScript(async () => {
+            return evolv.context.remoteContext;
+        });
+    }
+
+    async getConfirmations() {
+        const {Puppeteer} = this.helpers;
+
+        return await Puppeteer.executeScript(() => {
+            let confirmationsArray = [];
+
+            if (evolv.context.remoteContext.experiments.confirmations) {
+                evolv.context.remoteContext.experiments.confirmations.forEach(element => {
+                    confirmationsArray.push(element.cid);
+                })
+                return confirmationsArray;
+            } else {
+                return [];
             }
-            return items;
         });
     }
 }
